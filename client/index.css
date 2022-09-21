@@ -1,0 +1,10 @@
+* {
+    box-sizing: border-box;
+    font-family: odibee sans;
+    margin: 0 auto;
+}
+
+body {
+    background-image: url(./img/bg.png);
+}
+

@@ -9,4 +9,8 @@ import { buttonComp } from "./components/button";
   state.initState();
   const root = document.querySelector(".root");
   initRouter(root as Element);
+
+  state.setPlayerName("cynthia");
+  state.signUp();
+  console.log(state.data);
 })();

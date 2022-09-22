@@ -1,8 +1,14 @@
 type Jugada = "piedra" | "papel" | "tijera";
 
+const API_BASE_URL = "http://localhost:8000";
+
+import { rtdb } from "../server/realtimeDB";
+
 const state = {
   //// DATOS INICIALES ////
   data: {
+    name: "",
+
     currentGame: {
       computerPlay: "",
       myPlay: "",
@@ -32,6 +38,41 @@ const state = {
   setState(newState) {
     this.data = newState;
   },
+
+  /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LA RTDB <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
+  setPlayerName(name: string) {
+    const currentState = this.getState();
+    currentState.name = name;
+    this.setState(currentState);
+  },
+
+  signUp(callback?) {
+    const currentState = this.getState();
+    if (currentState.name) {
+      fetch(API_BASE_URL + "/signup", {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ name: currentState.name }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log("soy la data del fetch SignIn", data);
+          currentState.nameId = data.id;
+          this.setState(currentState);
+          callback();
+        });
+    } else {
+      console.error("No hay nombre en el state");
+      callback(true);
+    }
+  },
+
+  /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
   setMove(move: Jugada) {

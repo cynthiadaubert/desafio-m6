@@ -2,26 +2,34 @@ import { rtdb } from "./realtimeDB";
 import { firestore } from "./database";
 import express from "express";
 import nanoid from "nanoid";
+import cors from "cors";
 import "dotenv/config";
 
-const port = process.env.PORT || 3009;
+const port = process.env.PORT || 8000;
+
 const app = express();
 
-/* app.use(cors()); */
+app.use(cors());
 
-const playerCollectionRef = firestore.collection("players");
+const playerCollection = firestore.collection("players");
 const playroomCollection = firestore.collection("playrooms");
+
+app.post("/user", (req, res) => {
+  res.json({
+    name: "Cynthia",
+  });
+});
 
 app.post("/signup", (req, res) => {
   const name = req.body.name;
-  playerCollectionRef
+  playerCollection
     .where("name", "==", name)
     .get()
     .then((searchRes) => {
       if (searchRes.empty) {
-        playerCollectionRef.add({ name }).then((newPlayerRef) => {
+        playerCollection.add({ name }).then((newPlayerCreated) => {
           res.json({
-            id: newPlayerRef.id,
+            id: newPlayerCreated.id,
             new: true,
           });
         });
@@ -30,37 +38,6 @@ app.post("/signup", (req, res) => {
       }
     });
 });
-
-/* app.post("/signup", (req, res) => {
-  const email = req.body.email;
-  const name = req.body.name;
-  userCollectionRef
-    .where("email", "==", email)
-    .get()
-    .then((searchRes) => {
-      console.log("soy la respuesta de la busqueda", searchRes);
-      if (searchRes.empty) {
-        userCollectionRef
-          .add({
-            email,
-            name,
-          })
-          .then((newUserRef) => {
-            res.json({
-              id: newUserRef.id,
-              new: true,
-            });
-          });
-      } else {
-        res.status(400).json({
-          message: "usuario ya registrado",
-        });
-      }
-    });
-
-  userCollectionRef.doc("1234");
-});
- */
 
 // Ejecutar express static y escuchar el puerto //
 

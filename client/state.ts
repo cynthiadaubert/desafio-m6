@@ -7,7 +7,7 @@ import { rtdb } from "../server/realtimeDB";
 const state = {
   //// DATOS INICIALES ////
   data: {
-    name: "",
+    name: [],
 
     currentGame: {
       computerPlay: "",

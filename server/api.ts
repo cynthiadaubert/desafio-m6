@@ -10,13 +10,14 @@ const port = process.env.PORT || 8000;
 const app = express();
 
 app.use(cors());
+app.use(express.json());
 
 const playerCollection = firestore.collection("players");
 const playroomCollection = firestore.collection("playrooms");
 
 app.post("/user", (req, res) => {
   res.json({
-    name: "Cynthia",
+    name: "",
   });
 });
 

@@ -7,7 +7,11 @@ import { rtdb } from "../server/realtimeDB";
 const state = {
   //// DATOS INICIALES ////
   data: {
-    name: [],
+    myName: "",
+    rivalName: "",
+    userId: "",
+    roomId: "",
+    rtdbId: "",
 
     currentGame: {
       computerPlay: "",
@@ -43,7 +47,7 @@ const state = {
 
   setPlayerName(name: string) {
     const currentState = this.getState();
-    currentState.name = name;
+    currentState.myName = name;
     this.setState(currentState);
   },
 
@@ -55,14 +59,14 @@ const state = {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ name: currentState.name }),
+        body: JSON.stringify({ name: currentState.myName }),
       })
         .then((res) => {
           return res.json();
         })
         .then((data) => {
           console.log("soy la data del fetch SignIn", data);
-          currentState.nameId = data.id;
+          currentState.userId = data.id;
           this.setState(currentState);
           callback();
         });
@@ -70,6 +74,12 @@ const state = {
       console.error("No hay nombre en el state");
       callback(true);
     }
+  },
+
+  setRoomId(roomId: string) {
+    const currentState = this.getState();
+    currentState.roomId = roomId;
+    this.setState(currentState);
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

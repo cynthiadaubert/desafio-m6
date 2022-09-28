@@ -9,8 +9,11 @@ export function newGamePage(params) {
     <h1 class="title">Piedra papel o tijera</h1>
     
     <label for="Nombre">Tu nombre</label>
-    <input type="text" name="Nombre"/>
-    <button-comp class="button">Empezar</button-comp>
+
+    <form class="submit">
+      <input type="text" name="nombre">
+      <button-comp class="button">Empezar</button-comp>
+    </form>
     
     <hands-comp class="hands"></hands-comp>
    
@@ -103,9 +106,17 @@ export function newGamePage(params) {
   //////// IR A LA SIGUIENTE PÁGINA /////////
 
   const buttonElem: any = div.querySelector("button-comp");
+  const form = div.querySelector(".submit");
+
+  form!.addEventListener("submit", (e) => {
+    e.preventDefault();
+    console.log("submit cliqued");
+    const target = e.target as any;
+    console.log(target.value);
+  });
 
   buttonElem.addEventListener("click", () => {
-    params.goTo("/sharecode");
+    /*   params.goTo("/sharecode"); */
   });
 
   div.appendChild(style);

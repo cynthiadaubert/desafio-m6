@@ -1,3 +1,5 @@
+import { state } from "../../state";
+
 export function instructionsPage(params) {
   const div = document.createElement("div");
   div.className = "box";
@@ -8,15 +10,15 @@ export function instructionsPage(params) {
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room courier">Marce: 0 </div>
-          <div class="user-room two courier">Paula: 0 </div>
+          <div class="user-room courier">${state.data.myName}: ${state.data.history.me} </div>
+          <div class="user-room two courier">${state.data.rivalName}: ${state.data.history.computer} </div>
         </div>
       </div>
 
       <div class="room courier">
   
         <div class="courier">Sala</div>
-        <div class="roomId courier">76hh23</div>
+        <div class="roomId courier">${state.data.roomId}</div>
       </div>
 
     </div>

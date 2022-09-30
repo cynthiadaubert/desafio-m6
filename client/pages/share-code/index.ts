@@ -1,4 +1,5 @@
 import { initRouter } from "../../router";
+import { state } from "../../state";
 
 export function shareCodePage(params) {
   const div = document.createElement("div");
@@ -10,15 +11,15 @@ export function shareCodePage(params) {
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room">Marce: 0 </div>
-          <div class="user-room two">Paula: 0 </div>
+          <div class="user-room">${state.data.myName}: ${state.data.history.me} </div>
+          <div class="user-room two">${state.data.rivalName}: ${state.data.history.computer} </div>
         </div>
       </div>
 
       <div class="room">
       
         <div>Sala</div>
-        <div class="roomId">76hh23</div>
+        <div class="roomId">${state.data.roomId}</div>
       
       </div>
 

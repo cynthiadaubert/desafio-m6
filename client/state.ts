@@ -9,7 +9,8 @@ const state = {
   data: {
     myName: "",
     rivalName: "",
-    userId: "",
+    myUserId: "",
+    rivalUserId: "",
     roomId: "",
     rtdbId: "",
 
@@ -23,6 +24,8 @@ const state = {
       me: 0,
     },
   },
+
+  listeners: [],
 
   //// INICIAR CON EL ESTADO GUARDADO ////
   initState() {
@@ -65,8 +68,8 @@ const state = {
           return res.json();
         })
         .then((data) => {
-          console.log("soy la data del fetch SignIn", data);
-          currentState.userId = data.id;
+          console.log("soy la data del fetch SignUp", data);
+          currentState.myUserId = data.id;
           this.setState(currentState);
           callback();
         });
@@ -76,10 +79,64 @@ const state = {
     }
   },
 
-  setRoomId(roomId: string) {
+  setRoomId(roomId: any) {
     const currentState = this.getState();
     currentState.roomId = roomId;
     this.setState(currentState);
+  },
+
+  askNewRoom(callback?) {
+    const currentState = this.getState();
+    if (currentState.userId) {
+      fetch(API_BASE_URL + "/rooms", {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ userId: currentState.userId }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log("soy la data del fetch asknewRoom", data);
+          currentState.roomId = data.id;
+          this.setState(currentState);
+          if (callback) {
+            callback();
+          }
+        });
+    } else {
+      console.error("No hay user id en el state");
+    }
+  },
+
+  accessExistentRoom(callback?) {
+    const currentState = this.getState();
+    const roomId = currentState.roomId;
+    if (currentState.userId) {
+      fetch(
+        API_BASE_URL + "/rooms/" + roomId + "?userId=" + currentState.userId
+      )
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log("soy la data del fetch accessExistentRoom", data);
+          currentState.rtdbRoomId = data.rtdbRoomId;
+          this.setState(currentState);
+          this.listenRoom();
+          if (callback) {
+            callback();
+          }
+        });
+    } else {
+      console.error("No hay user id en el state");
+    }
+  },
+
+  suscribe(callback: (any) => any) {
+    this.listeners.push(callback);
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

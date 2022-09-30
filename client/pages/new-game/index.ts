@@ -1,22 +1,26 @@
 import { initRouter } from "../../router";
+import { state } from "../../state";
 
 export function newGamePage(params) {
   const div = document.createElement("div");
+
   div.className = "box";
 
   div.innerHTML = `
  
+
     <h1 class="title">Piedra papel o tijera</h1>
     
     <label for="Nombre">Tu nombre</label>
 
     <form class="submit">
       <input type="text" name="nombre">
-      <button-comp class="button">Empezar</button-comp>
+      <button class="button">Empezar</button>
     </form>
     
     <hands-comp class="hands"></hands-comp>
    
+
   `;
 
   //////// ESTILOS //////////
@@ -98,25 +102,46 @@ export function newGamePage(params) {
   }
 
   .button {
-    margin-bottom: 38px;
-  }
+    
+    background-color: #006CFC;
+    font-size: 45px;
+    border: 10px solid #001997;
+    border-radius: 10px;
+    min-width: 300px;
+    height: 87px;
+    font-family: Odibee sans;
+    color: #D8FCFC;
+    margin-top: 20px;
+    }
+
+    @media (min-width: 769px){
+      .button {
+        margin-top: 0px;
+        margin-bottom: 20px;
+        width: 336px;
+        height: 87px;
+      }
+    }
   
   `;
 
   //////// IR A LA SIGUIENTE PÁGINA /////////
 
-  const buttonElem: any = div.querySelector("button-comp");
-  const form = div.querySelector(".submit");
-
-  form!.addEventListener("submit", (e) => {
-    e.preventDefault();
-    console.log("submit cliqued");
-    const target = e.target as any;
-    console.log(target.value);
-  });
+  /*   const buttonElem: any = div.querySelector("button");
 
   buttonElem.addEventListener("click", () => {
-    /*   params.goTo("/sharecode"); */
+    params.goTo("/sharecode");
+  }); */
+
+  const form: any = div.querySelector(".submit");
+
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const target = e.target as any;
+    const name = target["nombre"].value;
+    state.setPlayerName(name);
+    console.log("click", name, state);
+    params.goTo("/sharecode");
   });
 
   div.appendChild(style);

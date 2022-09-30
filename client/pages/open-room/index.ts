@@ -1,4 +1,5 @@
 import { initRouter } from "../../router";
+import { state } from "../../state";
 
 export function openRoomPage(params) {
   const div = document.createElement("div");
@@ -7,9 +8,11 @@ export function openRoomPage(params) {
   div.innerHTML = `
  
     <h1 class="title">Piedra papel o tijera</h1>
-    
-    <input type="text" placeholder="Ingresar código" name="Codigo"/>
-    <button-comp class="button">Empezar</button-comp>
+
+    <form class="submit">
+      <input type="text" placeholder="Ingresar código" name="codigo">
+      <button class="button">Empezar</button>
+    </form>
     
     <hands-comp class="hands"></hands-comp>
    
@@ -92,14 +95,41 @@ export function openRoomPage(params) {
   .button {
     margin-bottom: 38px;
   }
+
+  .button {
+    
+    background-color: #006CFC;
+    font-size: 45px;
+    border: 10px solid #001997;
+    border-radius: 10px;
+    min-width: 300px;
+    height: 87px;
+    font-family: Odibee sans;
+    color: #D8FCFC;
+    margin-top: 20px;
+  }
+
+    @media (min-width: 769px){
+      .button {
+        margin-top: 0px;
+        margin-bottom: 20px;
+        width: 336px;
+        height: 87px;
+      }
+    }
   
   `;
 
   //////// IR A LA SIGUIENTE PÁGINA /////////
 
-  const buttonElem: any = div.querySelector("button-comp");
+  const form: any = div.querySelector(".submit");
 
-  buttonElem.addEventListener("click", () => {
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const target = e.target as any;
+    const code = target["codigo"].value;
+    state.setRoomId(code);
+    console.log("click", "Roomid en el state:", state.data.roomId);
     params.goTo("/instructions");
   });
 

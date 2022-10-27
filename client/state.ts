@@ -135,6 +135,57 @@ const state = {
     }
   },
 
+  setStart(start: boolean, callback?) {
+    const currentState = this.getState();
+    const { myName, rtdbId } = currentState;
+
+    fetch(API_BASE_URL + "/start", {
+      method: "patch",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        playerName: myName,
+        rtdbId: rtdbId,
+        start: start,
+      }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("soy la data del fetch setstart", data);
+        if (callback) {
+          //go waiting room
+          callback();
+        }
+      });
+  },
+
+  listenStartPlayers(callback?) {
+    const currentState = this.getState();
+    const { rtdbId, myName, rivalName } = currentState;
+    const rtdbRoom = rtdb.ref("rooms/" + rtdbId + "/current-game");
+
+    rtdbRoom.on("value", (snap) => {
+      const roomData = snap.val();
+      const { playerOne, playerTwo } = roomData;
+
+      if (!rivalName && playerOne.name && playerOne !== myName) {
+        currentState.rivalName = playerOne.myName;
+        this.setState(currentState);
+      } else if (!rivalName && playerTwo.name && playerTwo !== myName) {
+        currentState.rivalName = playerTwo.name;
+        this.setState(currentState);
+      }
+
+      if (playerOne.start && playerTwo.start == true)
+        /*  rtdbRoom.off("value") */
+        callback();
+      /* REDIRIGIR CON ESTE CALLBACK */
+    });
+  },
+
   suscribe(callback: (any) => any) {
     this.listeners.push(callback);
   },
@@ -142,14 +193,51 @@ const state = {
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
-  setMove(move: Jugada) {
-    const options = ["piedra", "papel", "tijera"];
+  setMove(move: Jugada, callback?) {
+    /* const options = ["piedra", "papel", "tijera"]; */
     const currentState = this.getState();
     currentState.currentGame.myPlay = move;
-    const randomMove = options[Math.floor(Math.random() * 3)];
-    const pcMove = (currentState.currentGame.computerPlay = randomMove);
+    /*     const randomMove = options[Math.floor(Math.random() * 3)];
+    const pcMove = (currentState.currentGame.computerPlay = randomMove); */
+
+    fetch(API_BASE_URL + "/moves", {
+      method: "patch",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({
+        playerName: currentState.myName,
+        rtdbId: currentState.rtdbId,
+        choice: move,
+      }),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (callback) {
+          callback();
+        }
+      });
 
     this.pushToHistory();
+  },
+
+  listenPlayerMoves(callback?) {
+    const currentState = this.getState();
+    const { rtdbId, rivalName } = currentState;
+    const rtdbRoom = rtdb.ref("rooms/" + rtdbId + "/current-game");
+
+    rtdbRoom.on("value", (snap) => {
+      const roomData = snap.val();
+      const { playerOne, playerTwo } = roomData;
+
+      if (playerOne.name == rivalName) {
+        currentState.currentGame.computerPlay = playerOne.choice;
+        this.setState(currentState);
+      } else {
+        currentState.currentGame.computerPlay = playerTwo.choice;
+      }
+      this.setState(currentState);
+    });
   },
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////

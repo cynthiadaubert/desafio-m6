@@ -10,6 +10,7 @@ import { buttonComp } from "./components/button";
   const root = document.querySelector(".root");
   initRouter(root as Element);
 
-  state.signUp();
+  state.setPlayerName("pepa");
+  /* state.signUp(); */
   console.log(state.data);
 })();

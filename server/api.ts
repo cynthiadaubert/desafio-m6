@@ -4,7 +4,6 @@ import express from "express";
 import nanoid from "nanoid";
 import cors from "cors";
 import "dotenv/config";
-import { AppCheck } from "firebase-admin/lib/app-check/app-check";
 
 const port = process.env.PORT || 8000;
 
@@ -46,20 +45,24 @@ app.post("/rooms", (req, res) => {
     .get()
     .then((doc) => {
       if (doc.exists) {
+        const playerData = doc.data();
         const roomRef = rtdb.ref("rooms/" + nanoid());
         roomRef
           .set({
-            ownerId: userId,
-            currentGame: {
+            player: playerData.name,
+            playerId: userId,
+            "current-game": {
               playerOne: {
                 name: "",
                 choice: "",
+                score: "",
                 online: false,
                 start: false,
               },
               playerTwo: {
                 name: "",
                 choice: "",
+                score: "",
                 online: false,
                 start: false,
               },
@@ -102,7 +105,7 @@ app.get("/rooms/:roomId", (req, res) => {
           .get()
           .then((snap) => {
             const data = snap.data();
-            res.json(data);
+            res.status(200).json(data);
           });
       } else {
         res.status(401).json({
@@ -110,48 +113,6 @@ app.get("/rooms/:roomId", (req, res) => {
         });
       }
     });
-});
-
-// CONECTAR PLAYER 2 A LA SALA
-
-app.post("/rooms/:rtdbId", (req, res) => {
-  const { rtdbId } = req.params;
-  const { userId } = req.query;
-
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
-
-  rtdbPlayersCollection.on("value", (snap) => {
-    const roomData = snap.val();
-    const { playerOne, playerTwo } = roomData;
-    if (playerTwo.name == "" && playerOne.name !== userId) {
-      roomData.playerTwo.name = userId;
-      rtdbPlayersCollection.update(roomData);
-      res.status(200).json({
-        message: "Player 2 joined",
-        rivalName: playerOne.name,
-        computer: playerOne.computerScore,
-        me: playerTwo.myScore,
-      });
-    } else if (playerOne.name == userId) {
-      res.status(200).json({
-        message: "Player 2 joined",
-        rivalName: playerTwo.name,
-        computer: playerTwo.computerScore,
-        me: playerOne.myScore,
-      });
-    } else if (playerOne.name == userId) {
-      res.status(200).json({
-        message: "Player 2 joined",
-        rivalName: playerOne.name,
-        computer: playerOne.computerScore,
-        me: playerTwo.myScore,
-      });
-    } else {
-      res.status(400).json({
-        message: "Usuario no válido para esta room",
-      });
-    }
-  });
 });
 
 // ACTUALIZA A START PARA QUE AMBOS JUGADORES PUEDAN EMPEZAR
@@ -178,13 +139,57 @@ app.patch("/start", (req, res) => {
   });
 });
 
-// ACTUALIZA LAS JUGADAS DE LOS JUGADORES
-app.patch("/setMove", (req, res) => {
-  const { userId, rtdbId, playerMove } = req.body;
+// CONECTAR PLAYER 2 A LA SALA
+
+app.post("/rooms/:rtdbId", (req, res) => {
+  const { rtdbId } = req.params;
+  const { userId } = req.body;
+
   const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
 
   rtdbPlayersCollection.on("value", (snap) => {
     const roomData = snap.val();
+    const { playerOne, playerTwo } = roomData;
+    if (playerTwo.name == "" && playerOne.name !== userId) {
+      roomData.playerTwo.name = userId;
+      rtdbPlayersCollection.update(roomData);
+      res.status(200).json({
+        message: "Player 2 joined",
+        rivalName: playerOne.name,
+        computer: playerOne.computerScore,
+        me: playerTwo.myScore,
+      });
+    } else if (playerOne.name == userId) {
+      res.status(200).json({
+        message: "Player  joined",
+        rivalName: playerTwo.name,
+        computer: playerTwo.computerScore,
+        me: playerOne.myScore,
+      });
+    } else if (playerTwo.name == userId) {
+      res.status(200).json({
+        message: "Player 2 joined",
+        rivalName: playerOne.name,
+        computer: playerOne.computerScore,
+        me: playerTwo.myScore,
+      });
+    } else {
+      res.status(400).json({
+        message: "Usuario no válido para esta room",
+      });
+    }
+  });
+});
+
+// ACTUALIZA LAS JUGADAS DE LOS JUGADORES EN LA DB
+app.patch("/moves", (req, res) => {
+  const { userId, rtdbId, playerMove } = req.body;
+  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
+  /* (resolver por que la room data nos la devuelve en null) */
+
+  rtdbPlayersCollection.on("value", (snap) => {
+    const roomData = snap.val();
+    console.log("soy la roomdata", roomData);
     const { playerOne } = roomData;
 
     if (playerOne.name == userId) {
@@ -197,6 +202,29 @@ app.patch("/setMove", (req, res) => {
 
     res.status(200).json({
       message: "Jugadas actualizadas",
+    });
+  });
+});
+
+// ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
+app.patch("/score", (req, res) => {
+  const { winner, rtdbId } = req.body;
+  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
+
+  rtdbPlayersCollection.on("value", (snap) => {
+    const roomData = snap.val();
+    const { playerOne } = roomData;
+
+    if (playerOne.name == winner) {
+      roomData.playerOne.score + 1;
+    } else {
+      roomData.playerTwo.score + 1;
+    }
+
+    rtdbPlayersCollection.update(roomData);
+
+    res.status(200).json({
+      message: "Puntajes actualizados",
     });
   });
 });

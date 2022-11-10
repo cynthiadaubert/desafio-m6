@@ -31,7 +31,9 @@ app.post("/signup", (req, res) => {
           });
         });
       } else {
-        res.status(400).json({ message: "usuario ya registrado" });
+        res.status(400).json({
+          message: "usuario ya registrado",
+        });
       }
     });
 });

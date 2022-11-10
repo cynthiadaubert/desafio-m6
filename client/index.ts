@@ -7,10 +7,34 @@ import { buttonComp } from "./components/button";
   buttonComp({});
   handsComp();
   state.initState();
+  /* (.a) */ state.subscribe(() => {
+    console.log("soy el subscribe del index", state.getState().myUserId);
+  });
   const root = document.querySelector(".root");
   initRouter(root as Element);
 
-  state.setPlayerName("pepa");
-  /* state.signUp(); */
-  console.log(state.data);
+  state.setPlayerName("fff");
+  state.signUp(
+    /* (err) => {
+    if (err) {
+      console.error("hubo un error en el signUp");
+    }
+    state.askNewRoom(); */
+    async () => {
+      try {
+        await state.askNewRoom();
+      } catch (err) {
+        console.log(err);
+      }
+    }
+  );
 })();
+
+//////////////////////////////////////////////////////////////////////////////
+
+/* (.a) El subscribe no estaba funcionando porque no estaba respetando los callbacks de la función Signup en el state.
+state.signUp va a usar una arrow function para respetar el scope(this) y si existiera un parámetro a recibir 
+sería solamente(err).SI NO HAY PARÁMETRO NO HAY ERROR, y con eso chequeamos.
+
+Hacemos este método de callback para que el signin nos pueda avisar que la promesa ha terminado.
+Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar asknewRoom() */

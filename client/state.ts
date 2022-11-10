@@ -25,7 +25,7 @@ const state = {
     },
   },
 
-  listeners: [],
+  listeners: [] /* <___ escucha todos los cambios por fuera de la sala */,
 
   //// INICIAR CON EL ESTADO GUARDADO ////
   initState() {
@@ -44,6 +44,10 @@ const state = {
   //// SETER ////
   setState(newState) {
     this.data = newState;
+    for (const cb of this.listeners) {
+      cb();
+    }
+    console.log("Soy el state en setState, he cambiado:", this.data);
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LA RTDB <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
@@ -71,11 +75,11 @@ const state = {
           console.log("soy la data del fetch SignUp", data);
           currentState.myUserId = data.id;
           this.setState(currentState);
-          callback();
+          callback(); /* -->cuando no hay error */
         });
     } else {
-      console.error("No hay nombre en el state");
-      callback(true);
+      console.error("No hay nombre en el state.data ");
+      callback(true); /* ---> cuando hay error */
     }
   },
 
@@ -87,13 +91,13 @@ const state = {
 
   askNewRoom(callback?) {
     const currentState = this.getState();
-    if (currentState.userId) {
+    if (currentState.myUserId) {
       fetch(API_BASE_URL + "/rooms", {
         method: "post",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ userId: currentState.userId }),
+        body: JSON.stringify({ userId: currentState.myUserId }),
       })
         .then((res) => {
           return res.json();
@@ -156,6 +160,7 @@ const state = {
       .then((data) => {
         console.log("soy la data del fetch setstart", data);
         if (callback) {
+          console.log("soy el callback", callback);
           //go waiting room
           callback();
         }
@@ -163,6 +168,7 @@ const state = {
   },
 
   listenStartPlayers(callback?) {
+    /* ---->aca escucha todo el tiempo los jugadores en la room */
     const currentState = this.getState();
     const { rtdbId, myName, rivalName } = currentState;
     const rtdbRoom = rtdb.ref("rooms/" + rtdbId + "/current-game");
@@ -184,10 +190,6 @@ const state = {
         callback();
       /* REDIRIGIR CON ESTE CALLBACK */
     });
-  },
-
-  suscribe(callback: (any) => any) {
-    this.listeners.push(callback);
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
@@ -308,7 +310,17 @@ const state = {
     }
 
     //// SETEA ESTE NUEVO ESTADO EN EL LOCALSTORAGE ////
-    localStorage.setItem("saved-data", JSON.stringify(state.data));
+    localStorage.setItem(
+      "saved-data",
+      JSON.stringify(state.data)
+    ); /* <-- se tiene que guardar antes todo el , en el init para guardar todos los cambios todo el tiempo */
+
+    //VER EL SUSCRIBE PARA CONECTAR LOS JUGADORES EN LOS COMPONENTES. QUE ES EL SUSCRIBE
+    //PUSHEAR LAS MANOS ELEGIDAS A LA RTDB
+  },
+
+  subscribe(callback: (any) => any) {
+    this.listeners.push(callback);
   },
 };
 

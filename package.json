@@ -1,12 +1,15 @@
 {
   "name": "desafio-m6",
   "version": "1.0.0",
-  "engines": {"node": "16.x"},
+  "engines": {
+    "node": "16.x"
+  },
   "main": "index.js",
   "license": "MIT",
   "dependencies": {
     "@types/firebase": "^3.2.1",
     "@types/node": "^18.7.18",
+    "concurrently": "^7.5.0",
     "cors": "^2.8.5",
     "dotenv": "^16.0.2",
     "express": "^4.18.1",
@@ -18,10 +21,13 @@
     "typescript": "^4.8.3"
   },
   "scripts": {
-    "pep": "parcel serve ./client/index.html",
-    "build": "tsc ./client/index.ts",
-    "start": "node ./client/index.js",
-    "dev": "nodemon --watch ./server/api.ts --exec ts-node ./server/api.ts"
+    "dev:front": "parcel serve ./client/index.html",
+    "build:front": "parcel build ./client/index.html",
+    "build:api": "tsc ./client/index.ts",
+    "dev:api": "nodemon --watch ./server/api.ts --exec ts-node ./server/api.ts",
+    "build": "npx concurrently 'yarn build:front' 'yarn build:api'",
+    "dev": "concurrently 'yarn dev:front' 'yarn dev:api'",
+    "start": "node ./client/index.js"
   },
   "devDependencies": {
     "@parcel/transformer-image": "2.0.0-rc.0"

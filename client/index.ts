@@ -13,16 +13,19 @@ import { buttonComp } from "./components/button";
   const root = document.querySelector(".root");
   initRouter(root as Element);
 
-  state.setPlayerName("fff");
+  state.setPlayerName("vc");
   state.signUp(
     /* (err) => {
     if (err) {
-      console.error("hubo un error en el signUp");
+      console.error("hubo un error en el signup");
+      state.askNewRoom(() => {
+        state.accessExistentRoom();
+      });
     }
-    state.askNewRoom(); */
+  }); */
     async () => {
       try {
-        await state.askNewRoom();
+        await state.askNewRoom(state.accessExistentRoom());
       } catch (err) {
         console.log(err);
       }

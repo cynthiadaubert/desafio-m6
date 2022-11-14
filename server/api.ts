@@ -5,7 +5,7 @@ import nanoid from "nanoid";
 import cors from "cors";
 import "dotenv/config";
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -236,6 +236,13 @@ app.patch("/score", (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(__dirname + "/dist/index.html");
   /*   
+
+  import * as path from "path"
+
+const rutaRelativa = path.resolve(__dirname, "../una-carpeta/",  "un-archivo.html");
+
+console.log(rutaRelativa)
+
 AGREGAR ARRIBA SI LO NECESITAMOS
 import * as path from "path";
 

@@ -128,9 +128,9 @@ export function openRoomPage(params) {
     e.preventDefault();
     const target = e.target as any;
     const code = target["codigo"].value;
-    state.setRoomId(
+    /*  state.setRoomId(
       code
-    ); /*setear el nuevo valor a la sala (otro usuario), sistema para chequear que el room id exista, verificar si existe la sala , llamado a la api.
+    ); */ /*setear el nuevo valor a la sala (otro usuario), sistema para chequear que el room id exista, verificar si existe la sala , llamado a la api.
     si existe , devuelve toda la info de la sala  */
     console.log("click", "Roomid en el state:", state.data.roomId);
     params.goTo("/instructions");

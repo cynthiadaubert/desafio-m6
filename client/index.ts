@@ -8,29 +8,19 @@ import { buttonComp } from "./components/button";
   handsComp();
   state.initState();
   /* (.a) */ state.subscribe(() => {
-    console.log("soy el subscribe del index", state.getState().myUserId);
+    /* console.log("soy el subscribe del index", state.getState().myUserId); */
   });
   const root = document.querySelector(".root");
   initRouter(root as Element);
 
-  state.setPlayerName("vc");
-  state.signUp(
-    /* (err) => {
-    if (err) {
-      console.error("hubo un error en el signup");
-      state.askNewRoom(() => {
-        state.accessExistentRoom();
-      });
+  state.setPlayerName("csz");
+  state.signUp(async () => {
+    try {
+      await state.askNewRoom();
+    } catch (err) {
+      console.log(err);
     }
-  }); */
-    async () => {
-      try {
-        await state.askNewRoom(state.accessExistentRoom());
-      } catch (err) {
-        console.log(err);
-      }
-    }
-  );
+  });
 })();
 
 //////////////////////////////////////////////////////////////////////////////
@@ -41,3 +31,12 @@ sería solamente(err).SI NO HAY PARÁMETRO NO HAY ERROR, y con eso chequeamos.
 
 Hacemos este método de callback para que el signin nos pueda avisar que la promesa ha terminado.
 Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar asknewRoom() */
+
+/* (err) => {
+    if (err) {
+      console.error("hubo un error en el signup");
+      state.askNewRoom(() => {
+        state.accessExistentRoom();
+      });
+    }
+  }); */

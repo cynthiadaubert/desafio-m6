@@ -2,6 +2,8 @@ type Jugada = "piedra" | "papel" | "tijera";
 
 const API_BASE_URL = "http://localhost:8080";
 
+import map from "lodash/map";
+
 import { rtdb } from "../server/realtimeDB";
 
 const state = {
@@ -12,7 +14,7 @@ const state = {
     myUserId: "",
     rivalUserId: "",
     roomId: "",
-    rtdbId: "",
+    rtdbRoomId: "",
 
     currentGame: {
       computerPlay: "",
@@ -58,12 +60,13 @@ const state = {
 
   listenRooms(callback?) {
     /* ---->aca escucha todo el tiempo los jugadores en la room */
-    console.log("listenroom");
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbId);
+    const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbRoomId);
     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
       console.log("soy los datos de la room", roomData);
+      /*       const currentGameData = map(roomData.currentGame);
+      console.log("current game data en listenRooms()", currentGameData); */
       this.setState(currentState);
     });
     if (callback) {
@@ -119,6 +122,7 @@ const state = {
           console.log("soy la data del fetch asknewRoom", data);
           currentState.roomId = data.id;
           this.setState(currentState);
+          this.accessExistentRoom();
           if (callback) {
             callback();
           }
@@ -131,8 +135,8 @@ const state = {
   accessExistentRoom(callback?) {
     const currentState = this.getState();
     const roomId = currentState.roomId;
-    const userId = currentState.userId;
-    if (currentState.userId) {
+    const userId = currentState.myUserId;
+    if (currentState.myUserId) {
       fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
         .then((res) => {
           return res.json();

@@ -1,6 +1,7 @@
 type Jugada = "piedra" | "papel" | "tijera";
 
-const API_BASE_URL = "http://localhost:8080";
+const API_BASE_URL =
+  /* "https://desafiom6.onrender.com" || */ "http://localhost:8080";
 
 import map from "lodash/map";
 
@@ -15,6 +16,9 @@ const state = {
     rivalUserId: "",
     roomId: "",
     rtdbRoomId: "",
+    myStart: false,
+    rivalStart: false,
+    roomData: "",
 
     currentGame: {
       computerPlay: "",
@@ -52,7 +56,7 @@ const state = {
     localStorage.setItem(
       "saved-data",
       JSON.stringify(newState)
-    ); /* --->tenemos habilitada siempre la última versión */
+    ); /* --->tenemos habilitada SIEMPRE la última versión */
     console.log("Soy el state en setState, he cambiado:", this.data);
   },
 
@@ -64,7 +68,8 @@ const state = {
     const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbRoomId);
     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
-      console.log("soy los datos de la room", roomData);
+      currentState.roomData = roomData;
+      /*  console.log("soy los datos de la room", roomData); */
       /*       const currentGameData = map(roomData.currentGame);
       console.log("current game data en listenRooms()", currentGameData); */
       this.setState(currentState);
@@ -76,7 +81,11 @@ const state = {
 
   setPlayerName(name?: string) {
     const currentState = this.getState();
-    currentState.myName = name;
+    if (name != "" || name == name) {
+      currentState.rivalName = name;
+    } else {
+      currentState.myName = name;
+    }
     this.setState(currentState);
   },
 
@@ -163,6 +172,7 @@ const state = {
       method: "patch",
       headers: {
         "content-type": "application/json",
+        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         playerName: myName,
@@ -212,9 +222,9 @@ const state = {
 
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
   setMove(move: Jugada, callback?) {
-    /* const options = ["piedra", "papel", "tijera"]; */
     const currentState = this.getState();
     currentState.currentGame.myPlay = move;
+    /* const options = ["piedra", "papel", "tijera"]; */
     /*     const randomMove = options[Math.floor(Math.random() * 3)];
     const pcMove = (currentState.currentGame.computerPlay = randomMove); */
 
@@ -231,6 +241,11 @@ const state = {
     })
       .then((res) => res.json())
       .then((data) => {
+        console.log("data de los moves", data);
+        currentState.currentGame.myPlay = {
+          /* data.rtdbRoomId */
+        };
+        this.setState(currentState);
         if (callback) {
           callback();
         }

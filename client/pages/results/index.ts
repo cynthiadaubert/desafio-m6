@@ -28,8 +28,8 @@ export function resultsPage(params) {
       <img class="star" src=${res}>
       <div class="score">
         <h1 class="title">Score</h1>
-        <div class="myPlay"> Vos:${currentState.history.me}</div>
-        <div class="computerPlay"> Máquina:${currentState.history.computer}</div>
+        <div class="myPlay"> ${state.data.myName}:${currentState.history.me}</div>
+        <div class="computerPlay"> ${state.data.rivalName}:${currentState.history.computer}</div>
       </div>
 
       <button-comp class="home">Volver a jugar</button-comp>

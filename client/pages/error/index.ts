@@ -7,7 +7,7 @@ export function errorPage(params) {
   div.innerHTML = `
  
     <h1 class="title">Piedra papel o tijera</h1>
-    <div class="text">Ups, esta sala está completa y tu nombre no coincide con nadie en la sala.</div>
+    <div class="text">Ups, esta sala está completa o tu código no coincide con ninguna sala.</div>
     <button-comp class="button">Volver</button-comp>
     
     <hands-comp class="hands"></hands-comp>

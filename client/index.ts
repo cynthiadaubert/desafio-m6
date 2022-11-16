@@ -13,7 +13,7 @@ import { buttonComp } from "./components/button";
   const root = document.querySelector(".root");
   initRouter(root as Element);
 
-  state.setPlayerName("csz");
+  /*   state.setPlayerName("vt");
   state.signUp(async () => {
     try {
       await state.askNewRoom();
@@ -21,6 +21,8 @@ import { buttonComp } from "./components/button";
       console.log(err);
     }
   });
+
+  state.listenRooms(); */
 })();
 
 //////////////////////////////////////////////////////////////////////////////

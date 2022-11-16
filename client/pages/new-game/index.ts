@@ -140,7 +140,6 @@ export function newGamePage(params) {
     const target = e.target as any;
     const name = target["nombre"].value;
     state.setPlayerName(name);
-    console.log("click", name, state);
     params.goTo("/sharecode");
   });
 

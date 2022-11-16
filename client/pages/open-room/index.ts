@@ -11,6 +11,7 @@ export function openRoomPage(params) {
 
     <form class="submit">
       <input type="text" placeholder="Ingresar código" name="codigo">
+      <input type="text" placeholder="Tu nombre" name="name">
       <button class="button">Empezar</button>
     </form>
     
@@ -128,12 +129,20 @@ export function openRoomPage(params) {
     e.preventDefault();
     const target = e.target as any;
     const code = target["codigo"].value;
+    const name = target["name"].value;
     /*  state.setRoomId(
       code
     ); */ /*setear el nuevo valor a la sala (otro usuario), sistema para chequear que el room id exista, verificar si existe la sala , llamado a la api.
     si existe , devuelve toda la info de la sala  */
-    console.log("click", "Roomid en el state:", state.data.roomId);
-    params.goTo("/instructions");
+    /*  console.log("click", "Roomid en el state:", state.data.roomId); */
+    state.setPlayerName(name);
+
+    state.accessExistentRoom(code);
+    if (code != state.data.roomId) {
+      params.goTo("/error");
+    } else {
+      params.goTo("/instructions");
+    }
   });
 
   div.appendChild(style);

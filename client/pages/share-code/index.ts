@@ -28,9 +28,11 @@ export function shareCodePage(params) {
 
     <h1 class="courier">Compartí el código:</h1> 
 
-      <h1 class="short-code courier">76HH23</h1>
+      <h1 class="short-code courier">${state.data.roomId}</h1>
     
     <h1 class="courier">con tu contrincante</h1>
+    <h1 class="lil courier">Esperando conexión...</h1>
+    <h1 class="lil courier on">Conectado a la sala</h1>
     
     <hands-comp class="hands"></hands-comp>
    
@@ -118,7 +120,7 @@ export function shareCodePage(params) {
   } 
   
   @media (min-width: 769px) {
-      .user-room {
+      .user-room, roomId {
       font-size: 24px;
       font-family: Courier New;
       font-weight: bold;
@@ -127,11 +129,6 @@ export function shareCodePage(params) {
 
   .two {
     color: #FF6442;
-  }
-
-  .roomId {
-    font-weight: normal;
-    font-family: Courier New;
   }
 
   .points {
@@ -146,9 +143,24 @@ export function shareCodePage(params) {
     }
   }
 
+  .lil {
+    font-size: 24px;
+  }
+
+  .on {
+    display: none;
+  }
+
   `;
 
   //////// IR A LA SIGUIENTE PÁGINA /////////
+
+  /*   if (state.data.myName || state.data.rivalName) {
+    state.setStart(true);
+
+    params.goTo("/instructions"); 
+    console.log("conectado", state.data.myStart, state.data.myStart);
+  } */
 
   div.appendChild(style);
   return div;

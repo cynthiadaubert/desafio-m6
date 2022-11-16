@@ -125,6 +125,7 @@ app.patch("/start", (req, res) => {
 
   rtdbPlayersCollection.on("value", (snap) => {
     const roomData = snap.val();
+    console.log("soy el room data patch", roomData);
     const { playerOne } = roomData;
 
     if (playerOne.name == userId) {

@@ -155,12 +155,12 @@ export function shareCodePage(params) {
 
   //////// IR A LA SIGUIENTE PÁGINA /////////
 
-  /*   if (state.data.myName || state.data.rivalName) {
+  if (state.data.rivalName) {
     state.setStart(true);
 
-    params.goTo("/instructions"); 
+    params.goTo("/instructions");
     console.log("conectado", state.data.myStart, state.data.myStart);
-  } */
+  }
 
   div.appendChild(style);
   return div;

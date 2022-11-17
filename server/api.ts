@@ -2,6 +2,7 @@ import { rtdb } from "./realtimeDB";
 import { firestore } from "./database";
 import express from "express";
 import nanoid from "nanoid";
+/* import * as cors from "cors"; */
 import cors from "cors";
 import "dotenv/config";
 

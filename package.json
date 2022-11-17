@@ -28,7 +28,7 @@
     "dev:api": "nodemon --watch \"./server/api.ts\" --exec \"ts-node ./server/api.ts\"",
     "build": "yarn build:front && yarn build:api",
     "dev": "concurrently \"yarn dev:front\" \"yarn dev:api\"",
-    "start": "node ./server/index.js"
+    "start": "node ./server/api.js"
   },
   "devDependencies": {
     "@parcel/transformer-image": "2.0.0-rc.0",

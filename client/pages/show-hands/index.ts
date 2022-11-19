@@ -1,87 +1,94 @@
+import { Router } from "@vaadin/router";
 import { state } from "../../state";
 
-const imagePiedraURL = require("url:../../img/piedra.png");
-const imagePapelURL = require("url:../../img/papel.png");
-const imageTijeraURL = require("url:../../img/tijera.png");
+class HandsPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
+  }
 
-export function handsPage(params) {
-  const currentState = state.getState();
-  const playerPlay = currentState.currentGame.myPlay;
-  const pcPlay = currentState.currentGame.computerPlay;
+  render() {
+    const imagePiedraURL = require("url:../../img/piedra.png");
+    const imagePapelURL = require("url:../../img/papel.png");
+    const imageTijeraURL = require("url:../../img/tijera.png");
 
-  const div = document.createElement("div");
-  div.className = "box";
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box";
 
-  ////// COMPROBAR MOVIMIENTOS PARA MOSTRAR MANOS //////
+    const currentState = state.getState();
+    const playerPlay = currentState.currentGame.myPlay;
+    const pcPlay = currentState.currentGame.computerPlay;
 
-  if (playerPlay == "piedra" && pcPlay == "papel") {
-    div.innerHTML = `
+    ////// COMPROBAR MOVIMIENTOS PARA MOSTRAR MANOS //////
+
+    if (playerPlay == "piedra" && pcPlay == "papel") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
-  }
-  if (playerPlay == "piedra" && pcPlay == "piedra") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "piedra" && pcPlay == "piedra") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
-  }
-  if (playerPlay == "piedra" && pcPlay == "tijera") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "piedra" && pcPlay == "tijera") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
-  }
-  if (playerPlay == "papel" && pcPlay == "papel") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "papel" && pcPlay == "papel") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
-  }
-  if (playerPlay == "papel" && pcPlay == "piedra") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "papel" && pcPlay == "piedra") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
-  }
-  if (playerPlay == "papel" && pcPlay == "tijera") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "papel" && pcPlay == "tijera") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
-  }
-  if (playerPlay == "tijera" && pcPlay == "tijera") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "tijera" && pcPlay == "tijera") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
-  }
-  if (playerPlay == "tijera" && pcPlay == "piedra") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "tijera" && pcPlay == "piedra") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
-  }
-  if (playerPlay == "tijera" && pcPlay == "papel") {
-    div.innerHTML = `
+    }
+    if (playerPlay == "tijera" && pcPlay == "papel") {
+      div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
-  }
+    }
 
-  ///////// ESTILOS /////////////
+    ///////// ESTILOS /////////////
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
     .box {
         display: flex;
@@ -120,12 +127,14 @@ export function handsPage(params) {
 
     `;
 
-  ////// PASAR A LA PÁGINA FINAL ///////
+    ////// PASAR A LA PÁGINA FINAL ///////
 
-  setTimeout(() => {
-    params.goTo("/results");
-  }, 3000);
+    setTimeout(() => {
+      /* Router.go("/results"); */
+    }, 3000);
 
-  div.appendChild(style);
-  return div;
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+customElements.define("showhands-page", HandsPage);

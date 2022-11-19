@@ -1,4 +1,14 @@
-import { initRouter } from "./router";
+import "./pages/welcome";
+import "./pages/new-game";
+import "./pages/open-room";
+import "./pages/share-code";
+import "./pages/instructions";
+import "./pages/loading-game";
+import "./pages/play";
+import "./pages/show-hands";
+import "./pages/results";
+import "./pages/error";
+import "./router";
 import { state } from "./state";
 import { handsComp } from "./components/hands";
 import { buttonComp } from "./components/button";
@@ -11,9 +21,9 @@ import { buttonComp } from "./components/button";
     /* console.log("soy el subscribe del index", state.getState().myUserId); */
   });
   const root = document.querySelector(".root");
-  initRouter(root as Element);
+  /*   initRouter(root as Element); */
 
-  /*   state.setPlayerName("vt");
+  /* state.setPlayerName("cmed");
   state.signUp(async () => {
     try {
       await state.askNewRoom();

@@ -1,32 +1,33 @@
-import { initRouter } from "../../router";
+import { Router } from "@vaadin/router";
+
 import { state } from "../../state";
 
-export function newGamePage(params) {
-  const div = document.createElement("div");
+class NewGamePage extends HTMLElement {
+  connectedCallback() {
+    this.render();
+  }
 
-  div.className = "box";
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
 
-  div.innerHTML = `
- 
+    div.className = "box";
 
+    div.innerHTML = `
     <h1 class="title">Piedra papel o tijera</h1>
     
     <label for="Nombre">Tu nombre</label>
-
     <form class="submit">
       <input type="text" name="nombre">
       <button class="button">Empezar</button>
     </form>
-    
     <hands-comp class="hands"></hands-comp>
-   
-
   `;
 
-  //////// ESTILOS //////////
+    //////// ESTILOS //////////
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
   body {
     box-sizing: border-box;
@@ -125,24 +126,35 @@ export function newGamePage(params) {
   
   `;
 
-  //////// IR A LA SIGUIENTE PÁGINA /////////
+    //////// IR A LA SIGUIENTE PÁGINA /////////
 
-  /*   const buttonElem: any = div.querySelector("button");
+    const form: any = div.querySelector(".submit");
 
-  buttonElem.addEventListener("click", () => {
-    params.goTo("/sharecode");
-  }); */
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const target = e.target as any;
+      const name = target["nombre"].value;
+      state.setPlayerName(name);
 
-  const form: any = div.querySelector(".submit");
+      if (/* name == cs.myName || name == cs.rivalName */ name == "xd") {
+        alert("Nombre de usuario no disponible");
+      } else {
+        state.signUp(async () => {
+          try {
+            await state.askNewRoom();
+          } catch (err) {
+            console.log(err);
+          }
+        });
 
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const target = e.target as any;
-    const name = target["nombre"].value;
-    state.setPlayerName(name);
-    params.goTo("/sharecode");
-  });
+        state.listenRooms();
+        Router.go("/sharecode");
+      }
+    });
 
-  div.appendChild(style);
-  return div;
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+
+customElements.define("newgame-page", NewGamePage);

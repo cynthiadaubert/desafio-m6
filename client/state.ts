@@ -1,7 +1,7 @@
 type Jugada = "piedra" | "papel" | "tijera";
 
 const API_BASE_URL =
-  /* "https://desafiom6.onrender.com" || */ "http://localhost:8080";
+  /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
 
 import map from "lodash/map";
 
@@ -65,13 +65,17 @@ const state = {
   listenRooms(callback?) {
     /* ---->aca escucha todo el tiempo los jugadores en la room */
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbRoomId);
+    const rtdbRoomRef = rtdb.ref(
+      "rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
       currentState.roomData = roomData;
-      /*  console.log("soy los datos de la room", roomData); */
-      /*       const currentGameData = map(roomData.currentGame);
-      console.log("current game data en listenRooms()", currentGameData); */
+      console.log("soy la roomdata", roomData);
+      /*       if (roomData.currentGame.playerOne.name) {
+        currentState.rivalName = roomData.currentGame.playerTwo;
+      } */
+      this.listenStartPlayers();
       this.setState(currentState);
     });
     if (callback) {
@@ -81,11 +85,13 @@ const state = {
 
   setPlayerName(name?: string) {
     const currentState = this.getState();
-    if (name != "" || name == name) {
+    currentState.myName = name;
+    /*     if (currentState.myName) {
       currentState.rivalName = name;
     } else {
       currentState.myName = name;
-    }
+    } */
+
     this.setState(currentState);
   },
 
@@ -130,8 +136,8 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch asknewRoom", data);
           currentState.roomId = data.id;
-          this.setState(currentState);
           this.accessExistentRoom();
+          this.setState(currentState);
           if (callback) {
             callback();
           }
@@ -153,8 +159,8 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch accessExistentRoom", data);
           currentState.rtdbRoomId = data.rtdbRoomId;
-          this.setState(currentState);
           this.listenRooms();
+          this.setState(currentState);
           if (callback) {
             callback();
           }
@@ -172,7 +178,6 @@ const state = {
       method: "patch",
       headers: {
         "content-type": "application/json",
-        "Access-Control-Allow-Origin": "*",
       },
       body: JSON.stringify({
         playerName: myName,
@@ -199,8 +204,25 @@ const state = {
     const { rtdbId, myName, rivalName } = currentState;
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbId + "/current-game");
 
-    rtdbRoomRef.on("value", (snap) => {
+    if (currentState.myName && currentState.myUserId) {
+      rtdbRoomRef.update({
+        playerOne: {
+          name: currentState.myName,
+          id: currentState.myUserId,
+          online: true,
+          start: true,
+        },
+      });
+      currentState.myStart = true;
+    }
+
+    this.setState(currentState);
+    if (callback) {
+      callback();
+    }
+    /*     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
+
       const { playerOne, playerTwo } = roomData;
 
       if (!rivalName && playerOne.name && playerOne !== myName) {
@@ -210,12 +232,12 @@ const state = {
         currentState.rivalName = playerTwo.name;
         this.setState(currentState);
       }
-
+      
       if (playerOne.start && playerTwo.start == true)
-        /*  rtdbRoom.off("value") */
-        callback();
-      /* REDIRIGIR CON ESTE CALLBACK */
-    });
+        rtdbRoomRef.off("value")  
+
+       REDIRIGIR CON ESTE CALLBACK 
+    }); */
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */

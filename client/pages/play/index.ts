@@ -1,24 +1,31 @@
-export function playPage(params) {
-  const div = document.createElement("div");
-  div.className = "container-play";
+import { Router } from "@vaadin/router";
+import { state } from "../../state";
 
-  div.innerHTML = `
+class PlayPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
+  }
+
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "container-play";
+
+    div.innerHTML = `
  
     <div class=circle></div>
 
-    <hands-container class="hands">
-      <hands-comp class="hands-comp" variant="selected"></hands-comp>
-    </hands-container>
+ 
+      <hands-comp class="hands" variant="selected"></hands-comp>
+    
   
   `;
+    //////* ESTILOS *//////
 
-  //////* ESTILOS *//////
-
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
   .root {
-    
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -30,6 +37,26 @@ export function playPage(params) {
     .root {
       height: 100vh;
       width: 100%;
+    }
+  }
+
+  .container-play{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    padding-top: 80px;
+  }
+
+  @media (min-width: 769px) {
+    .container-play {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      height: max-content;
+      max-width: 500px;
+      margin: 0 auto;
+      padding-top: 80px;
     }
   }
 
@@ -57,14 +84,6 @@ export function playPage(params) {
     position: fixed;
     bottom: 0;
   }
-
-  @media (min-width:769px) {
-    .hands {
-      width: 100%;
-      position: fixed;
-    }
-  }
-
 
   @keyframes loading {
 
@@ -105,32 +124,34 @@ export function playPage(params) {
 
   `;
 
-  ///// CUENTA ATRÁS DEL CÍRCULO Y VOLVER A INSTRUCTIONS ////
+    ///// CUENTA ATRÁS DEL CÍRCULO Y VOLVER A INSTRUCTIONS ////
 
-  let counter = 3;
+    let counter = 3;
 
-  const countdownElem = div.querySelector(".circle") as any;
+    const countdownElem = div.querySelector(".circle") as any;
 
-  const intervalId = setInterval(() => {
-    countdownElem.innerHTML = `${counter}`;
-    counter--;
-    if (counter < 0) {
-      params.goTo("/instructions");
-      clearInterval(intervalId);
-    }
-  }, 1000);
-
-  ////// TIMEOUT PARA PASAR A PAGE RESULTS //////
-
-  const handsContainer: any = div.querySelector(".hands");
-
-  handsContainer.addEventListener("click", () => {
-    clearInterval(intervalId);
-    setTimeout(() => {
-      params.goTo("/showhands");
+    const intervalId = setInterval(() => {
+      countdownElem.innerHTML = `${counter}`;
+      counter--;
+      if (counter < 0) {
+        /*   Router.go("/instructions"); */
+        clearInterval(intervalId);
+      }
     }, 1000);
-  });
 
-  div.appendChild(style);
-  return div;
+    ////// TIMEOUT PARA PASAR A PAGE RESULTS //////
+
+    const handsContainer: any = div.querySelector(".hands");
+
+    handsContainer.addEventListener("click", () => {
+      clearInterval(intervalId);
+      setTimeout(() => {
+        Router.go("/showhands");
+      }, 1000);
+    });
+
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+customElements.define("play-page", PlayPage);

@@ -1,28 +1,36 @@
+import { Router } from "@vaadin/router";
+
 import { state } from "../../state";
 
 const imageWin = require("url:../../img/ganaste.png");
 const imageLose = require("url:../../img/perdiste.png");
 const imageTie = require("url:../../img/empate.png");
 
-export function resultsPage(params) {
-  const box = document.createElement("div");
-  const style = document.createElement("style");
-
-  const currentState = state.getState();
-
-  //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
-  let res = state.whoWins();
-
-  if (state.whoWins() == "win") {
-    res = imageWin;
-  } else if (state.whoWins() == "lose") {
-    res = imageLose;
-  } else {
-    res = imageTie;
+class ResultsPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
   }
 
-  //// MUESTRA EL SCORE CON LOS PUNTOS Y BOTONES ////
-  box.innerHTML = `
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const box = document.createElement("div");
+    const style = document.createElement("style");
+
+    const currentState = state.getState();
+
+    //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
+    let res = state.whoWins();
+
+    if (state.whoWins() == "win") {
+      res = imageWin;
+    } else if (state.whoWins() == "lose") {
+      res = imageLose;
+    } else {
+      res = imageTie;
+    }
+
+    //// MUESTRA EL SCORE CON LOS PUNTOS Y BOTONES ////
+    box.innerHTML = `
 
     <div class="container">
       <img class="star" src=${res}>
@@ -37,8 +45,8 @@ export function resultsPage(params) {
     </div>    
   `;
 
-  //// ESTILOS ////
-  style.innerHTML = `
+    //// ESTILOS ////
+    style.innerHTML = `
 
   .root {
     box-sizing: border-box;
@@ -134,49 +142,36 @@ export function resultsPage(params) {
 
   `;
 
-  //// COLOR DE FONDO SEGUN RESULTADO ////
+    //// COLOR DE FONDO SEGUN RESULTADO ////
 
-  let result = state.whoWins();
+    let result = state.whoWins();
 
-  if (state.whoWins() == "win") {
-    result = "win";
-  } else if (state.whoWins() == "lose") {
-    result = "lose";
-  } else {
-    result = "tie";
+    if (state.whoWins() == "win") {
+      result = "win";
+    } else if (state.whoWins() == "lose") {
+      result = "lose";
+    } else {
+      result = "tie";
+    }
+
+    box.className = result;
+
+    //// BOTON VOLVER A JUGAR Y REINICIAR PUNTAJE ////
+
+    const buttonElem: any = box.querySelector(".home");
+    buttonElem.addEventListener("click", () => {
+      Router.go("/play");
+    });
+
+    const buttonReset: any = box.querySelector(".reset");
+    buttonReset.addEventListener("click", () => {
+      (state.data.history.computer = 0), (state.data.history.me = 0);
+      Router.go("/welcome");
+      console.log("puntaje reiniciado");
+    });
+
+    shadow.appendChild(box);
+    shadow.appendChild(style);
   }
-
-  document.body.className = result;
-
-  //// BOTON VOLVER A JUGAR Y REINICIAR PUNTAJE ////
-
-  const buttonElem: any = box.querySelector(".home");
-  buttonElem.addEventListener("click", () => {
-    params.goTo("/play");
-  });
-
-  const buttonReset: any = box.querySelector(".reset");
-  buttonReset.addEventListener("click", () => {
-    (state.data.history.computer = 0), (state.data.history.me = 0);
-    params.goTo("/welcome");
-    console.log("puntaje reiniciado");
-  });
-
-  box.appendChild(style);
-  return box;
 }
-
-/* localStorage.setItem(
-  "saved-data",
-  JSON.stringify({
-    currentGame: {
-      computerPlay: "",
-      myPlay: "",
-    },
-
-    history: {
-      computer: 0,
-      me: 0,
-    },
-  })
-); */
+customElements.define("results-page", ResultsPage);

@@ -1,10 +1,17 @@
+import { Router } from "@vaadin/router";
 import { state } from "../../state";
 
-export function instructionsPage(params) {
-  const div = document.createElement("div");
-  div.className = "box";
+class InstructionsPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
+  }
 
-  div.innerHTML = `
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box";
+
+    div.innerHTML = `
 
     <div class="info">
     
@@ -32,8 +39,8 @@ export function instructionsPage(params) {
       
     `;
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
     body {
       box-sizing: border-box;
@@ -161,12 +168,14 @@ export function instructionsPage(params) {
 
 `;
 
-  const buttonElem: any = div.querySelector("button-comp");
+    const buttonElem: any = div.querySelector("button-comp");
 
-  buttonElem.addEventListener("click", () => {
-    params.goTo("/play");
-  });
+    buttonElem.addEventListener("click", () => {
+      Router.go("/play");
+    });
 
-  div.appendChild(style);
-  return div;
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+customElements.define("instructions-page", InstructionsPage);

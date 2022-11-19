@@ -1,4 +1,5 @@
 import firebase from "firebase/compat/app";
+/* importarlo en su totalidad para no pasar por archivos ts  */
 import "firebase/compat/auth";
 import "firebase/compat/database";
 

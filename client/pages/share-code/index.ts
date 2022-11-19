@@ -1,11 +1,30 @@
-import { initRouter } from "../../router";
+import { Router } from "@vaadin/router";
 import { state } from "../../state";
 
-export function shareCodePage(params) {
-  const div = document.createElement("div");
-  div.className = "box";
+class ShareCodePage extends HTMLElement {
+  connectedCallback() {
+    this.render();
 
-  div.innerHTML = `
+    const cs = state.getState();
+    state.listenStartPlayers();
+
+    state.subscribe(() => {
+      if (
+        cs.roomData[0] == true &&
+        cs.roomData[1] == true &&
+        window.location.pathname == "/sharecode"
+      ) {
+        Router.go("/instructions");
+      }
+    });
+  }
+
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box";
+
+    div.innerHTML = `
  
     <div class="info">
     
@@ -38,130 +57,121 @@ export function shareCodePage(params) {
    
   `;
 
-  //////// ESTILOS //////////
+    //////// ESTILOS //////////
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
-  body {
-    box-sizing: border-box;
-    margin: 0 auto;
-  }
+    body {
+      box-sizing: border-box;
+      margin: 0 auto;
+    }
 
-  .root {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
+    .root {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
   
-  .box {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
-    width: 100vw;
-    height: 100vh;
-  }
-
-  @media (min-width: 769px) {
     .box {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      height: vh;
-      max-width: 400px;
-      margin-top: 31px;
+      margin-top: 20px;
+      width: 100vw;
+      height: 100vh;
     }
-  }
 
-  .info {
-    font-size: 24px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    margin: 0;
-    padding: 0;
-  }
+    @media (min-width: 769px) {
+      .box {
+      display: flex;
+      flex-direction: column;
+      max-width: 400px;
+      margin: 0 auto;
+      padding-top: 30px;
+      }
+    }
 
-  @media (min-width: 769px) {
-      .info {
+    .info {
+      font-size: 24px;
       display: flex;
       flex-direction: row;
       justify-content: space-between;
-      width: 400px;
-      margin-bottom: 120px;
-    }
-  }
-
-  h1 {
-    font-size: 35px;
-  }
-
-  .short-code {
-    font-size: 48px;
-    font-weight: bold;
-  }
-
-  .courier {
-    font-family: Courier New;
-    text-align: center;
-  }
-
-  @media (min-width: 769px) {
-     .room {
-      font-size: 24px;
-      font-family: Courier New;
-      font-weight: bold;
       margin: 0;
       padding: 0;
     }
-  } 
+
+    @media (min-width: 769px) {
+        .info {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        width: 400px;
+        margin-bottom: 120px;
+      }
+    }
+
+    h1 {
+      font-size: 35px;
+    }
+
+    .short-code {
+      font-size: 48px;
+      font-weight: bold;
+    }
+
+    .courier {
+      font-family: Courier New;
+      text-align: center;
+    }
+
+    @media (min-width: 769px) {
+      .room {
+        font-size: 24px;
+        font-family: Courier New;
+        font-weight: bold;
+        margin: 0;
+        padding: 0;
+      }
+    } 
   
-  @media (min-width: 769px) {
-      .user-room, roomId {
-      font-size: 24px;
-      font-family: Courier New;
-      font-weight: bold;
+    @media (min-width: 769px) {
+        .user-room, roomId {
+        font-size: 24px;
+        font-family: Courier New;
+        font-weight: bold;
+      }
     }
-  }
 
-  .two {
-    color: #FF6442;
-  }
+    .two {
+      color: #FF6442;
+    }
 
-  .points {
-    margin-right: 100px;
-    padding: 0;
-  }
-
-  @media (min-width: 769px) {
-      .points{
-      margin: 0;
+    .points {
+      margin-right: 100px;
       padding: 0;
     }
-  }
 
-  .lil {
-    font-size: 24px;
-  }
+    @media (min-width: 769px) {
+        .points{
+        margin: 0;
+        padding: 0;
+      }
+    }
 
-  .on {
-    display: none;
-  }
+    .lil {
+      font-size: 24px;
+    }
+
+    .on {
+      display: none;
+    }
 
   `;
 
-  //////// IR A LA SIGUIENTE PÁGINA /////////
-
-  if (state.data.rivalName) {
-    state.setStart(true);
-
-    params.goTo("/instructions");
-    console.log("conectado", state.data.myStart, state.data.myStart);
+    shadow.appendChild(div);
+    shadow.appendChild(style);
   }
-
-  div.appendChild(style);
-  return div;
 }
+customElements.define("sharecode-page", ShareCodePage);

@@ -1,23 +1,28 @@
-import { initRouter } from "../../router";
+import { Router } from "@vaadin/router";
 
-export function errorPage(params) {
-  const div = document.createElement("div");
-  div.className = "box";
+class ErrorPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
+  }
 
-  div.innerHTML = `
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box";
+
+    div.innerHTML = `
  
     <h1 class="title">Piedra papel o tijera</h1>
     <div class="text">Ups, esta sala está completa o tu código no coincide con ninguna sala.</div>
     <button-comp class="button">Volver</button-comp>
-    
     <hands-comp class="hands"></hands-comp>
    
   `;
 
-  //////// ESTILOS //////////
+    //////// ESTILOS //////////
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
   body {
     box-sizing: border-box;
@@ -94,18 +99,19 @@ export function errorPage(params) {
         height 100%;
       }
     }
-
-
+    
   `;
 
-  //////// IR A LA SIGUIENTE PÁGINA /////////
+    //////// IR A LA SIGUIENTE PÁGINA /////////
 
-  const buttonElem: any = div.querySelector("button-comp");
+    const buttonElem: any = div.querySelector("button-comp");
 
-  buttonElem.addEventListener("click", () => {
-    params.goTo("/welcome");
-  });
+    buttonElem.addEventListener("click", () => {
+      Router.go("/welcome");
+    });
 
-  div.appendChild(style);
-  return div;
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+customElements.define("error-page", ErrorPage);

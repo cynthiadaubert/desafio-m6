@@ -148,7 +148,9 @@ class OpenRoomPage extends HTMLElement {
       if (code != state.data.roomId) {
         Router.go("/error");
       } else {
-        Router.go("/instructions");
+        state.setRivalName(name);
+        state.setRtdbRivalValues();
+        Router.go("/connection");
       }
     });
 

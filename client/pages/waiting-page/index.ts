@@ -1,11 +1,24 @@
-import { initRouter } from "../../router";
+import { Router } from "@vaadin/router";
 import { state } from "../../state";
 
-export function loadingGamePage(params) {
-  const div = document.createElement("div");
-  div.className = "box";
+class WaitingPage extends HTMLElement {
+  connectedCallback() {
+    this.render();
 
-  div.innerHTML = `
+    this.addListeners();
+
+    state.subscribe(() => {
+      this.render;
+    });
+  }
+
+  addListeners() {}
+  render() {
+    let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box";
+
+    div.innerHTML = `
  
     <div class="info">
     
@@ -32,10 +45,10 @@ export function loadingGamePage(params) {
    
   `;
 
-  //////// ESTILOS //////////
+    //////// ESTILOS //////////
 
-  const style = document.createElement("style");
-  style.innerHTML = `
+    const style = document.createElement("style");
+    style.innerHTML = `
 
   body {
     box-sizing: border-box;
@@ -66,7 +79,8 @@ export function loadingGamePage(params) {
       justify-content: space-between;
       height: 380px;
       max-width: 400px;
-      margin-top: 31px;
+      padding-top: 30px; 
+      margin: 0 auto;
     }
   }
 
@@ -105,6 +119,14 @@ export function loadingGamePage(params) {
   }
 
   @media (min-width: 769px) {
+     .courier{
+      font-size: 42px;
+      width: 100%;
+      height 100%;
+      margin-bottom: 195px;
+    }
+  } 
+  @media (min-width: 769px) {
      .room {
       font-size: 24px;
       font-family: Courier New;
@@ -138,10 +160,11 @@ export function loadingGamePage(params) {
     }
   }
 
+
   `;
 
-  //////// IR A LA SIGUIENTE PÁGINA /////////
-
-  div.appendChild(style);
-  return div;
+    shadow.appendChild(div);
+    shadow.appendChild(style);
+  }
 }
+customElements.define("waiting-page", WaitingPage);

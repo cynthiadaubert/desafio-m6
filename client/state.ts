@@ -1,7 +1,7 @@
 type Jugada = "piedra" | "papel" | "tijera";
 
 const API_BASE_URL =
-  /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
+  /* "https://desafiom6.onrender.com" || */ "http://localhost:8080";
 
 import map from "lodash/map";
 
@@ -11,14 +11,16 @@ const state = {
   //// DATOS INICIALES ////
   data: {
     myName: "",
-    rivalName: "",
     myUserId: "",
+    rivalName: "",
     rivalUserId: "",
     roomId: "",
     rtdbRoomId: "",
     myStart: false,
+    online: "",
     rivalStart: false,
-    roomData: "",
+    rivalOnline: "",
+    roomData: {},
 
     currentGame: {
       computerPlay: "",
@@ -33,7 +35,6 @@ const state = {
 
   listeners: [] /* <___ escucha todos los cambios por fuera de la sala */,
 
-  //// INICIAR CON EL ESTADO GUARDADO ////
   initState() {
     const localData = localStorage.getItem("saved-data");
 
@@ -42,12 +43,10 @@ const state = {
     }
   },
 
-  //// GETTER ////
   getState() {
     return this.data;
   },
 
-  //// SETER ////
   setState(newState) {
     this.data = newState;
     for (const cb of this.listeners) {
@@ -62,7 +61,7 @@ const state = {
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LA RTDB <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-  listenRooms(callback?) {
+  listenRoom(callback?) {
     /* ---->aca escucha todo el tiempo los jugadores en la room */
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(
@@ -70,32 +69,29 @@ const state = {
     );
     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
-      currentState.roomData = roomData;
-      console.log("soy la roomdata", roomData);
-      /*       if (roomData.currentGame.playerOne.name) {
-        currentState.rivalName = roomData.currentGame.playerTwo;
-      } */
-      this.listenStartPlayers();
+      const currentGameList = map(roomData.currentGame);
+      currentState.roomData = currentGameList;
       this.setState(currentState);
+      console.log("CURRENT ROOM DATA:", this.getState(roomData));
     });
     if (callback) {
       callback();
     }
   },
 
-  setPlayerName(name?: string) {
+  setMyName(name?: string) {
     const currentState = this.getState();
     currentState.myName = name;
-    /*     if (currentState.myName) {
-      currentState.rivalName = name;
-    } else {
-      currentState.myName = name;
-    } */
-
     this.setState(currentState);
   },
 
-  signUp(callback?) {
+  setRivalName(name?: string) {
+    const currentState = this.getState();
+    currentState.rivalName = name;
+    this.setState(currentState);
+  },
+
+  mySignUp(callback?) {
     const currentState = this.getState();
     if (currentState.myName) {
       fetch(API_BASE_URL + "/signup", {
@@ -111,6 +107,31 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch SignUp", data);
           currentState.myUserId = data.id;
+          this.setState(currentState);
+          callback(); /* -->cuando no hay error */
+        });
+    } else {
+      console.error("No hay nombre en el state.data ");
+      callback(true); /* ---> cuando hay error */
+    }
+  },
+
+  rivalSignUp(callback?) {
+    const currentState = this.getState();
+    if (currentState.rivalName) {
+      fetch(API_BASE_URL + "/signup", {
+        method: "post",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ name: currentState.rivalName }),
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          console.log("soy la data del fetch SignUp", data);
+          currentState.rivalUserId = data.id;
           this.setState(currentState);
           callback(); /* -->cuando no hay error */
         });
@@ -136,8 +157,8 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch asknewRoom", data);
           currentState.roomId = data.id;
-          this.accessExistentRoom();
           this.setState(currentState);
+          this.setRtdbMyValues();
           if (callback) {
             callback();
           }
@@ -150,8 +171,8 @@ const state = {
   accessExistentRoom(callback?) {
     const currentState = this.getState();
     const roomId = currentState.roomId;
-    const userId = currentState.myUserId;
-    if (currentState.myUserId) {
+    const userId = currentState.myUserId || currentState.rivalUserId;
+    if (userId) {
       fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
         .then((res) => {
           return res.json();
@@ -159,8 +180,8 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch accessExistentRoom", data);
           currentState.rtdbRoomId = data.rtdbRoomId;
-          this.listenRooms();
           this.setState(currentState);
+          this.listenRoom();
           if (callback) {
             callback();
           }
@@ -170,40 +191,53 @@ const state = {
     }
   },
 
-  setStart(start: boolean, callback?) {
+  setRtdbMyValues() {
     const currentState = this.getState();
-    const { myName, rtdbId } = currentState;
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
 
-    fetch(API_BASE_URL + "/start", {
-      method: "patch",
-      headers: {
-        "content-type": "application/json",
-      },
-      body: JSON.stringify({
-        playerName: myName,
-        rtdbId: rtdbId,
-        start: start,
-      }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log("soy la data del fetch setstart", data);
-        if (callback) {
-          console.log("soy el callback", callback);
-          //go waiting room
-          callback();
-        }
+    if (currentState.myName && currentState.myUserId) {
+      rtdbRoomRef.update({
+        playerOne: {
+          name: currentState.myName,
+          id: currentState.myUserId,
+          online: true,
+        },
       });
+      currentState.online = true;
+    }
+    this.setState(currentState);
+    console.log("valores seteados");
   },
 
-  listenStartPlayers(callback?) {
-    /* ---->aca escucha todo el tiempo los jugadores en la room */
+  setRtdbRivalValues(callback?) {
     const currentState = this.getState();
-    const { rtdbId, myName, rivalName } = currentState;
-    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbId + "/current-game");
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
 
+    if (currentState.rivalName && currentState.rivalUserId) {
+      rtdbRoomRef.update({
+        playerTwo: {
+          name: currentState.rivalName,
+          id: currentState.rivalUserId,
+          online: true,
+        },
+      });
+      currentState.rivalOnline = true;
+    }
+    this.setState(currentState);
+    if (callback) {
+      callback();
+    }
+  },
+
+  setMyStart(callback?) {
+    const currentState = this.getState();
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
     if (currentState.myName && currentState.myUserId) {
       rtdbRoomRef.update({
         playerOne: {
@@ -215,40 +249,48 @@ const state = {
       });
       currentState.myStart = true;
     }
-
     this.setState(currentState);
     if (callback) {
       callback();
     }
-    /*     rtdbRoomRef.on("value", (snap) => {
-      const roomData = snap.val();
-
-      const { playerOne, playerTwo } = roomData;
-
-      if (!rivalName && playerOne.name && playerOne !== myName) {
-        currentState.rivalName = playerOne.myName;
-        this.setState(currentState);
-      } else if (!rivalName && playerTwo.name && playerTwo !== myName) {
-        currentState.rivalName = playerTwo.name;
-        this.setState(currentState);
-      }
-      
-      if (playerOne.start && playerTwo.start == true)
-        rtdbRoomRef.off("value")  
-
-       REDIRIGIR CON ESTE CALLBACK 
-    }); */
   },
 
+  setRivalStart(callback?) {
+    const currentState = this.getState();
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
+    if (currentState.rivalName && currentState.rivalUserId) {
+      rtdbRoomRef.update({
+        playerTwo: {
+          name: currentState.rivalName,
+          id: currentState.rivalUserId,
+          online: true,
+          start: true,
+        },
+      });
+      currentState.rivalStart = true;
+    }
+    this.setState(currentState);
+    if (callback) {
+      callback();
+    }
+  },
+
+  roomIsFull() {
+    const currentState = this.getState();
+    const roomData = currentState.roomData;
+    if (Object.keys(roomData).length == 3) {
+      console.error("sala llena");
+    }
+  },
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
   setMove(move: Jugada, callback?) {
     const currentState = this.getState();
     currentState.currentGame.myPlay = move;
-    /* const options = ["piedra", "papel", "tijera"]; */
-    /*     const randomMove = options[Math.floor(Math.random() * 3)];
-    const pcMove = (currentState.currentGame.computerPlay = randomMove); */
+    currentState.currentGame.computerPlay = move;
 
     fetch(API_BASE_URL + "/moves", {
       method: "patch",
@@ -276,30 +318,40 @@ const state = {
     this.pushToHistory();
   },
 
-  listenPlayerMoves(callback?) {
+  listenPlayerMoves(move: Jugada) {
     const currentState = this.getState();
-    const { rtdbId, rivalName } = currentState;
-    const rtdbRoom = rtdb.ref("rooms/" + rtdbId + "/current-game");
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
 
-    rtdbRoom.on("value", (snap) => {
-      const roomData = snap.val();
-      const { playerOne, playerTwo } = roomData;
-
-      if (playerOne.name == rivalName) {
-        currentState.currentGame.computerPlay = playerOne.choice;
-        this.setState(currentState);
-      } else {
-        currentState.currentGame.computerPlay = playerTwo.choice;
-      }
-      this.setState(currentState);
-    });
+    if (currentState.myName) {
+      rtdbRoomRef.update({
+        playerOne: {
+          name: currentState.myName,
+          id: currentState.myUserId,
+          start: false,
+          move: move,
+        },
+      });
+      currentState.currentGame.myPlay = move;
+    } else if (currentState.rivalName) {
+      rtdbRoomRef.update({
+        playerTwo: {
+          name: currentState.rivalName,
+          id: currentState.rivalUserId,
+          start: false,
+          move: move,
+        },
+      });
+      currentState.currentGame.computerPlay = move;
+    }
+    this.setState(currentState);
+    this.pushToHistory();
   },
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
-  whoWins() {
+  whoWins(myPlay: Jugada, computerPlay: Jugada) {
     const currentState = this.getState();
-    const myPlay = currentState.currentGame.myPlay;
-    const computerPlay = currentState.currentGame.computerPlay;
 
     const ganeConTijeras = myPlay == "tijera" && computerPlay == "papel";
     const ganeConPiedra = myPlay == "piedra" && computerPlay == "tijera";
@@ -317,50 +369,59 @@ const state = {
     let result;
 
     if (win == true) {
+      currentState.history.me++;
       result = "win";
     } else if (lose == true) {
+      currentState.history.computer++;
       result = "lose";
     } else {
       result = "tie";
     }
 
+    const roomId = currentState.roomId;
+
+    fetch(API_BASE_URL + "/rooms" + roomId, {
+      method: "post",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify({ result }),
+    })
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {});
     return result;
   },
 
-  //// GUARDA LOS PUNTOS SEGUN EL RESULTADO DE WHO WINS ////
-  pushToHistory() {
-    const result = this.whoWins();
-    const currentState = this.getState();
-    const computerScore = currentState.history.computer;
-    const myScore = currentState.history.me;
-
-    if (result == "win") {
-      this.setState({
-        ...currentState,
-        history: {
-          computer: computerScore,
-          me: myScore + 1,
+  restartPoints() {
+    const currentState = state.getState();
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms" + currentState.rtdbRoomId + "current-game"
+    );
+    if (currentState.myName) {
+      rtdbRoomRef.update({
+        playerOne: {
+          choice: "",
+          name: currentState.myName,
+          online: true,
+          start: false,
         },
       });
     }
-    if (result == "lose") {
-      this.setState({
-        ...currentState,
-        history: {
-          computer: computerScore + 1,
-          me: myScore,
+    if (currentState.rivalName) {
+      rtdbRoomRef.update({
+        playerTwo: {
+          choice: "",
+          name: currentState.rivalName,
+          online: true,
+          start: false,
         },
       });
     }
-    if (result == "tie") {
-      this.setState({
-        ...currentState,
-        history: {
-          computer: computerScore,
-          me: myScore,
-        },
-      });
-    }
+    currentState.currentGame.myPlay = "";
+    currentState.currentGame.computerPlay = "";
+    this.setState(currentState);
 
     //// SETEA ESTE NUEVO ESTADO EN EL LOCALSTORAGE ////
     localStorage.setItem(
@@ -368,7 +429,7 @@ const state = {
       JSON.stringify(state.data)
     ); /* <-- se tiene que guardar antes todo el , en el init para guardar todos los cambios todo el tiempo */
 
-    //VER EL SUSCRIBE PARA CONECTAR LOS JUGADORES EN LOS COMPONENTES. QUE ES EL SUSCRIBE
+    //VER EL SUSCRIBE PARA CONECTAR LOS JUGADORES EN LOS COMPONENTES.
     //PUSHEAR LAS MANOS ELEGIDAS A LA RTDB
   },
 

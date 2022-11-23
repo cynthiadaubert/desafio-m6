@@ -3,7 +3,7 @@ import "./pages/new-game";
 import "./pages/open-room";
 import "./pages/share-code";
 import "./pages/instructions";
-import "./pages/loading-game";
+import "./pages/waiting-page";
 import "./pages/play";
 import "./pages/show-hands";
 import "./pages/results";
@@ -52,3 +52,5 @@ Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar
       });
     }
   }); */
+
+/* localStorage.removeItem("saved-data"); */

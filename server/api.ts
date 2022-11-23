@@ -6,7 +6,7 @@ import nanoid from "nanoid";
 import cors from "cors";
 import "dotenv/config";
 
-const port = process.env.PORT || 8000;
+const port = process.env.PORT || 8080;
 
 const app = express();
 
@@ -52,8 +52,8 @@ app.post("/rooms", (req, res) => {
         const roomRef = rtdb.ref("rooms/" + nanoid());
         roomRef
           .set({
-            /*             player: playerData.name,
-            playerId: userId, */
+            owner: playerData.name,
+            ownerId: userId,
             "current-game": {
               playerOne: {
                 name: "",

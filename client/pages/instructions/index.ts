@@ -71,19 +71,6 @@ class InstructionsPage extends HTMLElement {
         padding-top: 0px;
       }
     }
-  
-    .hands {
-      margin-top: 80px;
-      padding: 0;
-      bottom: 0,
-    }
-  
-  
-    @media (min-width: 769px) {
-      .hands {
-       margin-right: 365px;
-      }
-    }
     
    .text {
     background-image: none;

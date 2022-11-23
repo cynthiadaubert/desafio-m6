@@ -8,6 +8,7 @@ router.setRoutes([
   { path: "/newgame", component: "newgame-page" },
   { path: "/openroom", component: "open-room" },
   { path: "/sharecode", component: "sharecode-page" },
+  { path: "/connection", component: "waiting-page" },
   { path: "/instructions", component: "instructions-page" },
   { path: "/play", component: "play-page" },
   { path: "/showhands", component: "showhands-page" },

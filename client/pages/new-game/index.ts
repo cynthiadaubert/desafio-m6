@@ -134,20 +134,18 @@ class NewGamePage extends HTMLElement {
       e.preventDefault();
       const target = e.target as any;
       const name = target["nombre"].value;
-      state.setPlayerName(name);
+      state.setMyName(name);
 
-      if (/* name == cs.myName || name == cs.rivalName */ name == "xd") {
-        alert("Nombre de usuario no disponible");
+      if (!name) {
+        alert("Ingrese nombre de usuario");
       } else {
-        state.signUp(async () => {
+        state.mySignUp(async () => {
           try {
             await state.askNewRoom();
           } catch (err) {
             console.log(err);
           }
         });
-
-        state.listenRooms();
         Router.go("/sharecode");
       }
     });

@@ -5,18 +5,11 @@ class ShareCodePage extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    const cs = state.getState();
-    state.listenStartPlayers();
+    const currentState = state.getState();
+    state.setRtdbMyValues();
+    state.listenRoom();
 
-    state.subscribe(() => {
-      if (
-        cs.roomData[0] == true &&
-        cs.roomData[1] == true &&
-        window.location.pathname == "/sharecode"
-      ) {
-        Router.go("/instructions");
-      }
-    });
+    state.subscribe(() => {});
   }
 
   render() {

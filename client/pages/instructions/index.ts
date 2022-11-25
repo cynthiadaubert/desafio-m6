@@ -3,29 +3,41 @@ import { state } from "../../state";
 
 class InstructionsPage extends HTMLElement {
   connectedCallback() {
-    this.render();
+    const currentState = state.getState();
+
+    state.subscribe(() => {
+      this.render();
+
+      const buttonElem: any = this.querySelector("button-comp");
+
+      buttonElem.addEventListener("click", () => {
+        if (currentState) Router.go("/connection");
+      });
+    });
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
+    const currentState = state.getState();
+    /*     let shadow = this.attachShadow({ mode: "open" });
     const div = document.createElement("div");
-    div.className = "box";
+    div.className = "box"; */
 
-    div.innerHTML = `
+    this.innerHTML = `
 
+    <div class="box">
     <div class="info">
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room courier">${state.data.myName}: ${state.data.history.me} </div>
-          <div class="user-room two courier">${state.data.rivalName}: ${state.data.history.computer} </div>
+          <div class="user-room courier">${currentState.myName}: ${state.data.history.me} </div>
+          <div class="user-room two courier">${currentState.rivalName}: ${state.data.history.computer} </div>
         </div>
       </div>
 
       <div class="room courier">
   
         <div class="courier">Sala</div>
-        <div class="roomId courier">${state.data.roomId}</div>
+        <div class="roomId courier">${currentState.roomId}</div>
       </div>
 
     </div>
@@ -36,6 +48,7 @@ class InstructionsPage extends HTMLElement {
       <button-comp class="button">¡Jugar!</button-comp>
     
       <hands-comp class="hand"></handscomp>
+      </div>
       
     `;
 
@@ -155,14 +168,7 @@ class InstructionsPage extends HTMLElement {
 
 `;
 
-    const buttonElem: any = div.querySelector("button-comp");
-
-    buttonElem.addEventListener("click", () => {
-      Router.go("/play");
-    });
-
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    this.appendChild(style);
   }
 }
 customElements.define("instructions-page", InstructionsPage);

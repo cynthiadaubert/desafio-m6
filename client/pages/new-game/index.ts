@@ -142,11 +142,11 @@ class NewGamePage extends HTMLElement {
         state.mySignUp(async () => {
           try {
             await state.askNewRoom();
+            Router.go("/sharecode");
           } catch (err) {
             console.log(err);
           }
         });
-        Router.go("/sharecode");
       }
     });
 

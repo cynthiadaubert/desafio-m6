@@ -12,8 +12,29 @@ class WaitingPage extends HTMLElement {
     });
   }
 
-  addListeners() {}
+  addListeners() {
+    state.setMyStart(async () => {
+      try {
+        await state.listenStart();
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    // When the tab is closed, change the ready status to false
+    /*     window.onbeforeunload = () => {
+      state.changeReadyStatus(false, () => {
+        return;
+      });
+    }; */
+  }
   render() {
+    const currentState = state.getState();
+
+    let { rivalName } = currentState;
+
+    rivalName = rivalName || "rival";
+
     let shadow = this.attachShadow({ mode: "open" });
     const div = document.createElement("div");
     div.className = "box";
@@ -39,7 +60,7 @@ class WaitingPage extends HTMLElement {
     </div>
     
 
-    <h1 class="courier">Esperando a que ${state.data.rivalName} presione ¡Jugar!...</h1> 
+    <h1 class="courier">Esperando a que ${state.data.myName} presione ¡Jugar!...</h1> 
     
     <hands-comp class="hands"></hands-comp>
    

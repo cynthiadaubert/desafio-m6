@@ -3,22 +3,34 @@ import { state } from "../../state";
 
 class ShareCodePage extends HTMLElement {
   connectedCallback() {
-    this.render();
-
     const currentState = state.getState();
+
     state.setRtdbMyValues();
     state.listenRoom();
 
-    state.subscribe(() => {});
+    state.subscribe(() => {
+      if (
+        currentState.roomData.playerOne.online == true &&
+        currentState.roomData.playerTwo.online == true &&
+        window.location.pathname == "/sharecode"
+      ) {
+        console.log("online");
+        /*  Router.go("/instructions"); */
+      }
+      this.render();
+    });
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box";
+    const currentState = state.getState();
 
-    div.innerHTML = `
+    /*     let shadow = this.attachShadow({ mode: "open" });
+    const div = document.createElement("div");
+    div.className = "box"; */
+
+    this.innerHTML = `
  
+    <div class="box">
     <div class="info">
     
       <div class="points">
@@ -31,7 +43,7 @@ class ShareCodePage extends HTMLElement {
       <div class="room">
       
         <div>Sala</div>
-        <div class="roomId">${state.data.roomId}</div>
+        <div class="roomId">${currentState.roomId}</div>
       
       </div>
 
@@ -40,14 +52,14 @@ class ShareCodePage extends HTMLElement {
 
     <h1 class="courier">Compartí el código:</h1> 
 
-      <h1 class="short-code courier">${state.data.roomId}</h1>
+      <h1 class="short-code courier">${currentState.roomId}</h1>
     
     <h1 class="courier">con tu contrincante</h1>
     <h1 class="lil courier">Esperando conexión...</h1>
     <h1 class="lil courier on">Conectado a la sala</h1>
     
     <hands-comp class="hands"></hands-comp>
-   
+   </div>
   `;
 
     //////// ESTILOS //////////
@@ -163,8 +175,8 @@ class ShareCodePage extends HTMLElement {
 
   `;
 
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    /*     shadow.appendChild(div); */
+    this.appendChild(style);
   }
 }
 customElements.define("sharecode-page", ShareCodePage);

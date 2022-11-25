@@ -134,7 +134,7 @@ class PlayPage extends HTMLElement {
       countdownElem.innerHTML = `${counter}`;
       counter--;
       if (counter < 0) {
-        /*   Router.go("/instructions"); */
+        Router.go("/instructions");
         clearInterval(intervalId);
       }
     }, 1000);

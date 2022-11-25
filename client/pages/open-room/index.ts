@@ -4,14 +4,19 @@ import { state } from "../../state";
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
     this.render();
+
+    const currentState = state.getState();
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
+    const currentState = state.getState();
+    /*     let shadow = this.attachShadow({ mode: "open" });
     const div = document.createElement("div");
-    div.className = "box";
+    div.className = "box"; */
 
-    div.innerHTML = `
+    this.innerHTML = `
+
+    <div class="box">
    
       <h1 class="title">Piedra papel o tijera</h1>
   
@@ -22,6 +27,8 @@ class OpenRoomPage extends HTMLElement {
       </form>
       
       <hands-comp class="hands"></hands-comp>
+
+      </div>
      
     `;
 
@@ -128,34 +135,40 @@ class OpenRoomPage extends HTMLElement {
     `;
     //////// IR A LA SIGUIENTE PÁGINA /////////
 
-    const form: any = div.querySelector(".submit");
+    const form = document.querySelector(".submit") as any;
 
     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const target = e.target as any;
-      const code = target["codigo"].value;
-      const name =
-        target["name"]
-          .value; /*setear el nuevo valor a la sala (otro usuario), sistema para chequear que el room id exista, verificar si existe la sala , llamado a la api.
-    /*  state.setRoomId(
-      code
-    ); 
-    si existe , devuelve toda la info de la sala  */
-      /*  console.log("click", "Roomid en el state:", state.data.roomId); 
-           state.setPlayerName(name);*/
+      const roomCode = target["codigo"].value;
+      currentState.roomId = roomCode;
+      const name = target["name"].value;
+      state.setRivalName(name);
+      state.setState(currentState);
+      state.setRtdbRivalValues(() => {
+        state.accessExistentRoom(() => {
+          state.subscribe(() => {
+            console.log("rival name ahora", currentState.rivalName);
+            if (
+              !currentState.roomData.playerTwo.name &&
+              location.pathname == "/openroom"
+            ) {
+              state.listenRoom();
+            } else if (
+              currentState.roomData.PlayerTwo.name &&
+              location.pathname == "/openroom"
+            ) {
+              Router.go("/error");
+            }
+          });
+        });
+      });
 
-      state.accessExistentRoom(code);
-      if (code != state.data.roomId) {
-        Router.go("/error");
-      } else {
-        state.setRivalName(name);
-        state.setRtdbRivalValues();
-        Router.go("/connection");
-      }
+      Router.go("/instructions");
     });
 
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    /*    shadow.appendChild(div); */
+    this.appendChild(style);
   }
 }
 customElements.define("open-room", OpenRoomPage);

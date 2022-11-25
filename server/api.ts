@@ -145,6 +145,29 @@ app.patch("/start", (req, res) => {
   });
 });
 
+app.patch("/start", (req, res) => {
+  const { userId, rtdbId, start } = req.body;
+  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
+
+  rtdbPlayersCollection.on("value", (snap) => {
+    const roomData = snap.val();
+    console.log("soy el room data patch", roomData);
+    const { playerOne } = roomData;
+
+    if (playerOne.name == userId) {
+      roomData.playerOne.start = start;
+    } else {
+      roomData.playerTwo.start = start;
+    }
+
+    rtdbPlayersCollection.update(roomData);
+
+    res.status(200).json({
+      message: "Start seteado a true",
+    });
+  });
+});
+
 // CONECTAR PLAYER 2 A LA SALA
 
 app.post("/rooms/:rtdbId", (req, res) => {

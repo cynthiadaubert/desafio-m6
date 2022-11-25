@@ -142,20 +142,22 @@ class OpenRoomPage extends HTMLElement {
       const target = e.target as any;
       const roomCode = target["codigo"].value;
       currentState.roomId = roomCode;
-      const name = target["name"].value;
-      state.setRivalName(name);
+      const rivalName = target["name"].value;
+      state.setRivalName(rivalName);
       state.setState(currentState);
       state.setRtdbRivalValues(() => {
         state.accessExistentRoom(() => {
           state.subscribe(() => {
             console.log("rival name ahora", currentState.rivalName);
             if (
-              !currentState.roomData.playerTwo.name &&
+              !currentState.roomData.playerTwo.online &&
               location.pathname == "/openroom"
             ) {
               state.listenRoom();
+              console.log("escucha");
+              Router.go("/instructions");
             } else if (
-              currentState.roomData.PlayerTwo.name &&
+              currentState.roomData.playerTwo.online &&
               location.pathname == "/openroom"
             ) {
               Router.go("/error");
@@ -163,8 +165,6 @@ class OpenRoomPage extends HTMLElement {
           });
         });
       });
-
-      Router.go("/instructions");
     });
 
     /*    shadow.appendChild(div); */

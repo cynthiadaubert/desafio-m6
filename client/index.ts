@@ -52,5 +52,4 @@ Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar
       });
     }
   }); */
-
 /* localStorage.removeItem("saved-data"); */

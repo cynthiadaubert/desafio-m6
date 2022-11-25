@@ -15,7 +15,8 @@ class ShareCodePage extends HTMLElement {
         window.location.pathname == "/sharecode"
       ) {
         console.log("online");
-        /*  Router.go("/instructions"); */
+
+        /* Router.go("/instructions"); */
       }
       this.render();
     });

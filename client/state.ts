@@ -181,7 +181,8 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch accessExistentRoom", data);
           currentState.rtdbRoomId = data.rtdbRoomId;
-          /*    this.listenRoom(); */
+          this.setRtdbMyValues();
+          this.listenRoom();
           this.setState(currentState);
           if (callback) {
             callback();

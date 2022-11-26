@@ -1,7 +1,7 @@
 import { Router } from "@vaadin/router";
 import { state } from "../../state";
 
-class InstructionsPage extends HTMLElement {
+class InstrPage extends HTMLElement {
   connectedCallback() {
     const currentState = state.getState();
     this.render();
@@ -170,4 +170,4 @@ class InstructionsPage extends HTMLElement {
     this.appendChild(style);
   }
 }
-customElements.define("instructions-page", InstructionsPage);
+customElements.define("instr-page", InstrPage);

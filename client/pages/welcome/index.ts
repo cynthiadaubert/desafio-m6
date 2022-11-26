@@ -16,7 +16,7 @@ class WelcomePage extends HTMLElement {
     
       <button-comp class="button">Nuevo juego</button-comp>
       <button-comp class="button-room">Ingresar a una sala</button-comp>
-    
+  
       <hands-comp class="hand"></hands-comp>
    
       `;

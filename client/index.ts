@@ -3,6 +3,7 @@ import "./pages/new-game";
 import "./pages/open-room";
 import "./pages/share-code";
 import "./pages/instructions";
+import "./pages/instr";
 import "./pages/waiting-page";
 import "./pages/play";
 import "./pages/show-hands";
@@ -52,7 +53,7 @@ Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar
       });
     }
   }); */
-/* localStorage.removeItem("saved-data"); 
+localStorage.removeItem("saved-data");
 
 /* window.onbeforeunload = function () {
   localStorage.removeItem("saved-data");

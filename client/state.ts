@@ -38,9 +38,16 @@ const state = {
   initState() {
     const localData = localStorage.getItem("saved-data");
 
-    if (localData !== null) {
+    if (!localData) {
+      return;
+    } else {
       this.setState(JSON.parse(localData));
     }
+    /*     const localData = localStorage.getItem("saved-data");
+
+    if (localData !== null) {
+      this.setState(JSON.parse(localData));
+    } */
   },
 
   getState() {

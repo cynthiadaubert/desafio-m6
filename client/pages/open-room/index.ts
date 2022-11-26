@@ -156,10 +156,9 @@ class OpenRoomPage extends HTMLElement {
       const roomCode = target["codigo"].value;
       currentState.roomId = roomCode;
       const rivalName = target["name"].value;
-      state.setRivalName(rivalName);
+
       state.setState(currentState);
 
-      state.setRtdbRivalValues();
       state.accessExistentRoom(() => {
         console.log("rival name ahora", currentState.rivalName);
         if (
@@ -171,6 +170,8 @@ class OpenRoomPage extends HTMLElement {
           currentState.roomData.playerTwo.name == "" &&
           location.pathname == "/openroom"
         ) {
+          state.setRivalName(rivalName);
+          state.setRtdbRivalValues();
           state.listenRoom();
           console.log("escucha");
           Router.go("/instructions");

@@ -10,13 +10,12 @@ class ShareCodePage extends HTMLElement {
 
     state.subscribe(() => {
       if (
-        currentState.roomData.playerOne.online == true &&
         currentState.roomData.playerTwo.online == true &&
         window.location.pathname == "/sharecode"
       ) {
         console.log("online");
 
-        /* Router.go("/instructions"); */
+        Router.go("/instr");
       }
       this.render();
     });
@@ -37,7 +36,6 @@ class ShareCodePage extends HTMLElement {
       <div class="points">
         <div class="user-box">
           <div class="user-room">${state.data.myName}: ${state.data.history.me} </div>
-          <div class="user-room two">${state.data.rivalName}: ${state.data.history.computer} </div>
         </div>
       </div>
 

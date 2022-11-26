@@ -10,6 +10,7 @@ router.setRoutes([
   { path: "/sharecode", component: "sharecode-page" },
   { path: "/connection", component: "waiting-page" },
   { path: "/instructions", component: "instructions-page" },
+  { path: "/instr", component: "instr-page" },
   { path: "/play", component: "play-page" },
   { path: "/showhands", component: "showhands-page" },
   { path: "/result", component: "results-page" },

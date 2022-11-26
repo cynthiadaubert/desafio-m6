@@ -3,6 +3,7 @@ import { state } from "../../state";
 
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
+    state.listenRoom();
     this.render();
 
     const currentState = state.getState();
@@ -137,7 +138,7 @@ class OpenRoomPage extends HTMLElement {
 
     const form = document.querySelector(".submit") as any;
 
-    form.addEventListener("submit", (e) => {
+    /*     form.addEventListener("submit", (e) => {
       e.preventDefault();
       const target = e.target as any;
       const roomCode = target["codigo"].value;
@@ -146,28 +147,37 @@ class OpenRoomPage extends HTMLElement {
       state.setRivalName(rivalName);
       state.setState(currentState);
       state.setRtdbRivalValues(() => {
-        state.accessExistentRoom(() => {
-          state.subscribe(() => {
-            console.log("rival name ahora", currentState.rivalName);
-            if (
-              !currentState.roomData.playerTwo.online &&
-              location.pathname == "/openroom"
-            ) {
-              state.listenRoom();
-              console.log("escucha");
-              Router.go("/instructions");
-            } else if (
-              currentState.roomData.playerTwo.online &&
-              location.pathname == "/openroom"
-            ) {
-              Router.go("/error");
-            }
-          });
-        });
+        state.accessExistentRoom();
+      });
+    }); */
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const target = e.target as any;
+      const roomCode = target["codigo"].value;
+      currentState.roomId = roomCode;
+      const rivalName = target["name"].value;
+      state.setRivalName(rivalName);
+      state.setState(currentState);
+
+      state.setRtdbRivalValues();
+      state.accessExistentRoom(() => {
+        console.log("rival name ahora", currentState.rivalName);
+        if (
+          currentState.roomData.playerTwo.name &&
+          location.pathname == "/openroom"
+        ) {
+          Router.go("/error");
+        } else if (
+          currentState.roomData.playerTwo.name == "" &&
+          location.pathname == "/openroom"
+        ) {
+          state.listenRoom();
+          console.log("escucha");
+          Router.go("/instructions");
+        }
       });
     });
 
-    /*    shadow.appendChild(div); */
     this.appendChild(style);
   }
 }

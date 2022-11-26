@@ -52,4 +52,10 @@ Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar
       });
     }
   }); */
-/* localStorage.removeItem("saved-data"); */
+/* localStorage.removeItem("saved-data"); 
+
+/* window.onbeforeunload = function () {
+  localStorage.removeItem("saved-data");
+  return "";
+};
+ */

@@ -3,17 +3,11 @@ import { state } from "../../state";
 
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
-    state.listenRoom();
     this.render();
-
-    const currentState = state.getState();
   }
 
   render() {
     const currentState = state.getState();
-    /*     let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box"; */
 
     this.innerHTML = `
 
@@ -138,36 +132,49 @@ class OpenRoomPage extends HTMLElement {
 
     const form = document.querySelector(".submit") as any;
 
-    /*     form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const target = e.target as any;
-      const roomCode = target["codigo"].value;
-      currentState.roomId = roomCode;
-      const rivalName = target["name"].value;
-      state.setRivalName(rivalName);
-      state.setState(currentState);
-      state.setRtdbRivalValues(() => {
-        state.accessExistentRoom();
-      });
-    }); */
     form.addEventListener("submit", (e) => {
+      const cs = state.getState();
       e.preventDefault();
       const target = e.target as any;
       const roomCode = target["codigo"].value;
-      currentState.roomId = roomCode;
       const rivalName = target["name"].value;
+      cs.roomId = roomCode;
 
-      state.setState(currentState);
+      state.setRivalName(rivalName);
+
+      state.rivalSignUp();
 
       state.accessExistentRoom(() => {
+        state.subscribe(() => {
+          if (cs.roomData[1].name && location.pathname == "/openroom") {
+            Router.go("/error");
+          } else if (!cs.roomData[1].name && location.pathname == "/openroom") {
+            state.subscribe(() => {
+              if (
+                cs.roomData[0].online == false ||
+                cs.roomData[1].online == false
+              ) {
+                console.error("falta un jugador");
+              }
+              if (
+                cs.roomData[0].online == true &&
+                cs.roomData[1].online == true &&
+                window.location.pathname == "/openroom"
+              ) {
+                Router.go("/instructions");
+                console.log("rival name ahora:", cs.rivalName);
+              }
+            });
+          }
+        });
+      });
+
+      /*       state.accessExistentRoom(() => {
         console.log("rival name ahora", currentState.rivalName);
-        if (
-          currentState.roomData.playerTwo.name &&
-          location.pathname == "/openroom"
-        ) {
+        if (currentState.roomData[1].name && location.pathname == "/openroom") {
           Router.go("/error");
         } else if (
-          currentState.roomData.playerTwo.name == "" &&
+          currentState.roomData[1].name == "" &&
           location.pathname == "/openroom"
         ) {
           state.setRivalName(rivalName);
@@ -176,7 +183,7 @@ class OpenRoomPage extends HTMLElement {
           console.log("escucha");
           Router.go("/instructions");
         }
-      });
+      }); */
     });
 
     this.appendChild(style);

@@ -75,12 +75,14 @@ const state = {
       "rooms/" + currentState.rtdbRoomId + "/current-game"
     );
     rtdbRoomRef.on("value", (snap) => {
+      const cs = this.getState();
       const roomData = snap.val();
-      currentState.roomData = roomData;
+      const currentGame = map(roomData);
+      cs.roomData = currentGame;
       /*      const currentGameList = map(roomData.currentGame);
       currentState.roomData = currentGameList; */
       this.setState(currentState);
-      console.log("ROOM DATA:", roomData);
+      console.log("ROOM DATA:", currentGame);
     });
     if (callback) {
       callback();
@@ -115,6 +117,7 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch SignUp", data);
           currentState.myUserId = data.id;
+
           this.setState(currentState);
           callback(); /* -->cuando no hay error */
         });
@@ -124,7 +127,7 @@ const state = {
     }
   },
 
-  rivalSignUp(callback?) {
+  rivalSignUp() {
     const currentState = this.getState();
     if (currentState.rivalName) {
       fetch(API_BASE_URL + "/signup", {
@@ -141,11 +144,11 @@ const state = {
           console.log("soy la data del fetch SignUp", data);
           currentState.rivalUserId = data.id;
           this.setState(currentState);
-          callback(); /* -->cuando no hay error */
+          /* -->cuando no hay error */
         });
     } else {
       console.error("No hay nombre en el state.data ");
-      callback(true); /* ---> cuando hay error */
+      /* ---> cuando hay error */
     }
   },
 
@@ -179,7 +182,7 @@ const state = {
   accessExistentRoom(callback?) {
     const currentState = this.getState();
     const roomId = currentState.roomId;
-    const userId = currentState.myUserId;
+    const userId = currentState.myUserId || currentState.rivalUserId;
     if (userId) {
       fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
         .then((res) => {
@@ -189,8 +192,9 @@ const state = {
           console.log("soy la data del fetch accessExistentRoom", data);
           currentState.rtdbRoomId = data.rtdbRoomId;
           this.setRtdbMyValues();
-          this.listenRoom();
+          this.setRtdbRivalValues();
           this.setState(currentState);
+          this.listenRoom();
           if (callback) {
             callback();
           }
@@ -233,14 +237,13 @@ const state = {
       rtdbRoomRef.update({
         playerTwo: {
           name: currentState.rivalName,
-          /*       id: currentState.rivalUserId, */
+          /*      id: currentState.rivalUserId,  */
           online: true,
         },
       });
       currentState.rivalOnline = true;
     }
     this.setState(currentState);
-    console.log("rival values", currentState.roomData.playerTwo);
     if (callback) {
       callback();
     }
@@ -290,7 +293,7 @@ const state = {
     }
   },
 
-  listenStart(callback?) {
+  /*   listenStart(callback?) {
     const currentState = this.getState();
     const { myName, rivalName } = currentState;
     const rtdbRoomRef = rtdb.ref(
@@ -324,15 +327,8 @@ const state = {
         }
       }
     });
-  },
+  }, */
 
-  roomIsFull() {
-    const currentState = this.getState();
-    const roomData = currentState.roomData;
-    if (Object.keys(roomData).length == 3) {
-      console.error("sala llena");
-    }
-  },
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
@@ -411,11 +407,8 @@ const state = {
   }, */
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
-  whoWins() {
+  whoWins(myPlay: Jugada, computerPlay: Jugada) {
     const currentState = this.getState();
-
-    const myPlay = currentState.currentGame.myPlay;
-    const computerPlay = currentState.currentGame.computerPlay;
 
     const ganeConTijeras = myPlay == "tijera" && computerPlay == "papel";
     const ganeConPiedra = myPlay == "piedra" && computerPlay == "tijera";

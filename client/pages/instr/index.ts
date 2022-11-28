@@ -3,16 +3,31 @@ import { state } from "../../state";
 
 class InstrPage extends HTMLElement {
   connectedCallback() {
-    const currentState = state.getState();
     this.render();
-    state.subscribe(() => {});
+
+    state.accessExistentRoom();
+    state.subscribe(() => {
+      const currentState = state.getState();
+
+      if (
+        (location.pathname == "/instr" &&
+          currentState.roomData[0].start == false) ||
+        currentState.roomData[1].start == false
+      ) {
+        console.error("Falta que el otro jugador presione start");
+      }
+      if (
+        currentState.roomData[0].start == true &&
+        currentState.roomData[1].start == true &&
+        location.pathname == "/instr"
+      ) {
+        Router.go("/play");
+      }
+    });
   }
 
   render() {
     const currentState = state.getState();
-    /*     let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box"; */
 
     this.innerHTML = `
 
@@ -163,9 +178,13 @@ class InstrPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      Router.go("/play");
-      /*       currentState.rivalStart = true;
-      console.log("rival start is true"); */
+      currentState.myStart = true;
+      if (currentState.rivalStart == false) {
+        Router.go("/connection");
+        console.log("my start is true");
+      } else {
+        Router.go("/play");
+      }
     });
     this.appendChild(style);
   }

@@ -12,6 +12,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static("dist"));
 
 const playerCollection = firestore.collection("players");
 const playroomCollection = firestore.collection("rooms");
@@ -120,131 +121,16 @@ app.get("/rooms/:roomId", (req, res) => {
     });
 });
 
-// ACTUALIZA A START PARA QUE AMBOS JUGADORES PUEDAN EMPEZAR
-
-app.patch("/start", (req, res) => {
-  const { userId, rtdbId, start } = req.body;
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
-
-  rtdbPlayersCollection.on("value", (snap) => {
-    const roomData = snap.val();
-    console.log("soy el room data patch", roomData);
-    const { playerOne } = roomData;
-
-    if (playerOne.name == userId) {
-      roomData.playerOne.start = start;
-    } else {
-      roomData.playerTwo.start = start;
-    }
-
-    rtdbPlayersCollection.update(roomData);
-
-    res.status(200).json({
-      message: "Start seteado a true",
-    });
-  });
-});
-
-app.patch("/start", (req, res) => {
-  const { userId, rtdbId, start } = req.body;
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
-
-  rtdbPlayersCollection.on("value", (snap) => {
-    const roomData = snap.val();
-    console.log("soy el room data patch", roomData);
-    const { playerOne } = roomData;
-
-    if (playerOne.name == userId) {
-      roomData.playerOne.start = start;
-    } else {
-      roomData.playerTwo.start = start;
-    }
-
-    rtdbPlayersCollection.update(roomData);
-
-    res.status(200).json({
-      message: "Start seteado a true",
-    });
-  });
-});
-
-// CONECTAR PLAYER 2 A LA SALA
-
-app.post("/rooms/:rtdbId", (req, res) => {
-  const { rtdbId } = req.params;
-  const { userId } = req.body;
-
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
-
-  rtdbPlayersCollection.on("value", (snap) => {
-    const roomData = snap.val();
-    const { playerOne, playerTwo } = roomData;
-    if (playerTwo.name == "" && playerOne.name !== userId) {
-      roomData.playerTwo.name = userId;
-      rtdbPlayersCollection.update(roomData);
-      res.status(200).json({
-        message: "Player 2 joined",
-        rivalName: playerOne.name,
-        computer: playerOne.computerScore,
-        me: playerTwo.myScore,
-      });
-    } else if (playerOne.name == userId) {
-      res.status(200).json({
-        message: "Player  joined",
-        rivalName: playerTwo.name,
-        computer: playerTwo.computerScore,
-        me: playerOne.myScore,
-      });
-    } else if (playerTwo.name == userId) {
-      res.status(200).json({
-        message: "Player 2 joined",
-        rivalName: playerOne.name,
-        computer: playerOne.computerScore,
-        me: playerTwo.myScore,
-      });
-    } else {
-      res.status(400).json({
-        message: "Usuario no válido para esta room",
-      });
-    }
-  });
-});
-
-// ACTUALIZA LAS JUGADAS DE LOS JUGADORES EN LA DB
-app.patch("/moves", (req, res) => {
-  const { userId, rtdbId, playerMove } = req.body;
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
-  /* (resolver por que la room data nos la devuelve en null) */
-
-  rtdbPlayersCollection.on("value", (snap) => {
-    const roomData = snap.val();
-    console.log("soy la roomdata", roomData);
-    const { playerOne } = roomData;
-
-    if (playerOne.name == userId) {
-      roomData.playerOne.choice = playerMove;
-    } else {
-      roomData.playerTwo.choice = playerMove;
-    }
-
-    rtdbPlayersCollection.update(roomData);
-
-    res.status(200).json({
-      message: "Jugadas actualizadas",
-    });
-  });
-});
-
 // ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
-app.patch("/score", (req, res) => {
-  const { winner, rtdbId } = req.body;
+app.post("/score", (req, res) => {
+  const { result, rtdbId } = req.body;
   const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
 
   rtdbPlayersCollection.on("value", (snap) => {
     const roomData = snap.val();
     const { playerOne } = roomData;
 
-    if (playerOne.name == winner) {
+    if (playerOne.name == result) {
       roomData.playerOne.score + 1;
     } else {
       roomData.playerTwo.score + 1;
@@ -271,8 +157,6 @@ import * as path from "path";
 const pathResolve = path.resolve("", "dist/index.html");
   res.sendFile(pathResolve); */
 });
-
-app.use(express.static("dist"));
 
 app.listen(port, () => {
   console.log("Server connected at http://localhost:${port}");

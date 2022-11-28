@@ -163,9 +163,14 @@ class InstructionsPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      Router.go("/play");
-      /*       currentState.rivalStart = true;
-      console.log("rival start is true"); */
+      currentState.rivalStart = true;
+      console.log("rival start is true");
+      if (currentState.myStart == false) {
+        Router.go("/connection");
+     
+      } else {
+        Router.go("/play");
+      }
     });
     this.appendChild(style);
   }

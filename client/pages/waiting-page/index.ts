@@ -6,34 +6,19 @@ class WaitingPage extends HTMLElement {
     this.render();
 
     this.addListeners();
-
     state.subscribe(() => {
       this.render;
     });
   }
 
   addListeners() {
-    state.setMyStart(async () => {
-      try {
-        await state.listenStart();
-      } catch (err) {
-        console.log(err);
-      }
-    });
-
-    // When the tab is closed, change the ready status to false
-    /*     window.onbeforeunload = () => {
-      state.changeReadyStatus(false, () => {
-        return;
-      });
-    }; */
+    const currentState = state.getState();
+    if (currentState.myStart && currentState.rivalStart == true) {
+      Router.go("/play");
+    }
   }
   render() {
     const currentState = state.getState();
-
-    let { rivalName } = currentState;
-
-    rivalName = rivalName || "rival";
 
     let shadow = this.attachShadow({ mode: "open" });
     const div = document.createElement("div");
@@ -45,22 +30,22 @@ class WaitingPage extends HTMLElement {
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room">${state.data.myName}: ${state.data.history.me}</div>
-          <div class="user-room two">${state.data.rivalName}: ${state.data.history.computer} </div>
+          <div class="user-room">${currentState.myName}: ${currentState.history.me}</div>
+          <div class="user-room two">${currentState.rivalName}: ${currentState.history.computer} </div>
         </div>
       </div>
 
       <div class="room">
       
         <div>Sala</div>
-        <div class="roomId">${state.data.roomId}</div>
+        <div class="roomId">${currentState.roomId}</div>
       
       </div>
 
     </div>
     
 
-    <h1 class="courier">Esperando a que ${state.data.myName} presione ¡Jugar!...</h1> 
+    <h1 class="courier">Esperando a que el oponente presione ¡Jugar!...</h1> 
     
     <hands-comp class="hands"></hands-comp>
    

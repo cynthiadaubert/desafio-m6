@@ -5,12 +5,12 @@ class ShareCodePage extends HTMLElement {
   connectedCallback() {
     const currentState = state.getState();
 
-    state.setRtdbMyValues();
     state.listenRoom();
 
     state.subscribe(() => {
       if (
-        currentState.roomData.playerTwo.online == true &&
+        currentState.roomData[0].online == true &&
+        currentState.roomData[1].online == true &&
         window.location.pathname == "/sharecode"
       ) {
         console.log("online");
@@ -23,11 +23,6 @@ class ShareCodePage extends HTMLElement {
 
   render() {
     const currentState = state.getState();
-
-    /*     let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box"; */
-
     this.innerHTML = `
  
     <div class="box">
@@ -35,7 +30,7 @@ class ShareCodePage extends HTMLElement {
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room">${state.data.myName}: ${state.data.history.me} </div>
+          <div class="user-room">${currentState.myName}: ${state.data.history.me} </div>
         </div>
       </div>
 
@@ -174,7 +169,6 @@ class ShareCodePage extends HTMLElement {
 
   `;
 
-    /*     shadow.appendChild(div); */
     this.appendChild(style);
   }
 }

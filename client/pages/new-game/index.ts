@@ -1,5 +1,4 @@
 import { Router } from "@vaadin/router";
-
 import { state } from "../../state";
 
 class NewGamePage extends HTMLElement {
@@ -142,31 +141,12 @@ class NewGamePage extends HTMLElement {
         state.mySignUp(() => {
           state.askNewRoom(() => {
             state.accessExistentRoom();
-            /*         Router.go("/sharecode"); */
+            Router.go("/sharecode");
           });
         });
       }
     });
-    /* form.addEventListener("submit", (e) => {
-      e.preventDefault();
-      const target = e.target as any;
-      const name = target["nombre"].value;
-      state.setMyName(name);
 
-      if (!name) {
-        alert("Ingrese nombre de usuario");
-      } else {
-        state.mySignUp(async () => {
-          try {
-            await state.askNewRoom();
-            Router.go("/sharecode");
-          } catch (err) {
-            console.log(err);
-          }
-        });
-      }
-    });
- */
     shadow.appendChild(div);
     shadow.appendChild(style);
   }

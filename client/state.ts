@@ -111,7 +111,6 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch SignUp RIVAL", data);
           currentState.rivalUserId = data.id;
-          this.setRtdbRivalValues();
           this.setState(currentState);
           /* -->cuando no hay error */
         });
@@ -195,11 +194,6 @@ const state = {
 
       const newRoomData = state.getState();
       localStorage.setItem("room-data", JSON.stringify({ ...newRoomData }));
-      /*  if (currentState.myName) {
-        currentState.myName = rtdbData["current-game"].playerOne.name;
-      }   else if (currentState.rivalName) {
-        currentState.rivalName = rtdbData["current-game"].playerTwo.name;
-      } */
     });
   },
 
@@ -215,6 +209,8 @@ const state = {
           name: currentState.myName,
           id: currentState.myUserId,
           online: true,
+          start: false,
+          choice: "",
         },
       });
       currentState.online = true;
@@ -236,8 +232,10 @@ const state = {
       rtdbRoomRef.update({
         playerTwo: {
           name: currentState.rivalName,
-          /*      id: currentState.rivalUserId,  */
+          id: currentState.rivalUserId,
           online: true,
+          start: false,
+          choice: "",
         },
       });
       currentState.rivalOnline = true;
@@ -250,9 +248,7 @@ const state = {
 
   setMyStart(callback?) {
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
+    const rtdbRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
     if (currentState.myName && currentState.myUserId) {
       rtdbRoomRef.update({
         playerOne: {

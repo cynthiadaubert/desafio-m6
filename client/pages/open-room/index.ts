@@ -1,4 +1,5 @@
 import { Router } from "@vaadin/router";
+import { Console } from "console";
 import { state } from "../../state";
 
 class OpenRoomPage extends HTMLElement {
@@ -143,12 +144,32 @@ class OpenRoomPage extends HTMLElement {
       const roomCode = target["codigo"].value;
       const rivalName = target["name"].value;
       state.setRivalName(rivalName);
+      state.setState(cs);
 
-      state.rivalSignUp(() => {
-        ///PONER QUE SETEA LOS VALORES DE LA RTDB DEL RIVAL
-        /* state.listenRoom(); */
-        Router.go("/instructions");
-      });
+      /*  console.log("current state", state.data.roomId); */
+      if (!roomCode) {
+        alert("Ingrese el código de la room");
+      } else if (!rivalName) {
+        alert("Ingrese su nombre de usuario");
+      } else if (roomCode == state.data.roomId) {
+        state.rivalSignUp(() => {
+          state.setRtdbRivalValues(() => {
+            if (
+              cs.roomData["current-game"].playerTwo.name &&
+              location.pathname == "/openroom"
+            ) {
+              console.log("ya hay dos jugadores");
+              Router.go("/error");
+            } else {
+              state.accessExistentRoom();
+              Router.go("/instructions");
+            }
+          });
+        });
+      } else {
+        console.log("el código no coincide con el state");
+        Router.go("/error");
+      }
 
       /*       state.accessExistentRoom(() => {
         state.subscribe(() => {
@@ -173,22 +194,6 @@ class OpenRoomPage extends HTMLElement {
             });
           }
         });
-      }); */
-
-      /*      state.accessExistentRoom(() => {
-        console.log("rival name ahora", currentState.rivalName);
-        if (currentState.roomData[1].name && location.pathname == "/openroom") {
-          Router.go("/error");
-        } else if (
-          currentState.roomData[1].name == "" &&
-          location.pathname == "/openroom"
-        ) {
-          state.setRivalName(rivalName);
-          state.setRtdbRivalValues();
-          state.listenRoom();
-          console.log("escucha");
-          Router.go("/instructions");
-        }
       }); */
     });
 

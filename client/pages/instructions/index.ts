@@ -3,10 +3,10 @@ import { state } from "../../state";
 
 class InstructionsPage extends HTMLElement {
   connectedCallback() {
+    const currentState = state.getState();
     this.render();
-
-    /*     state.listenRoom(); */
-    state.subscribe(() => {});
+    /*     state.listenRoom(); 
+    /*   state.subscribe(); */
   }
 
   render() {
@@ -161,25 +161,14 @@ class InstructionsPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      if (currentState.rivalName == "") {
-        state.setMyStart();
-      } else if (currentState.myName == "") {
-        state.setRivalStart();
+      state.setRivalStart();
+      console.log("rival is set start", currentState);
+      if (currentState.roomData.playerOne.start == false) {
+        console.error("falta que un jugador esté listo");
+        Router.go("/connection");
+      } else {
+        Router.go("/play");
       }
-      state.subscribe(() => {
-        const cs = state.getState();
-
-        if (
-          (location.pathname == "/instructions" &&
-            cs.roomData[0].start == false) ||
-          cs.roomData[1].start == false
-        ) {
-          console.error("falta que un jugador esté listo");
-          Router.go("/connection");
-        } else {
-          Router.go("/play");
-        }
-      });
     });
 
     this.appendChild(style);

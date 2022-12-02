@@ -18,6 +18,10 @@ import { buttonComp } from "./components/button";
   buttonComp({});
   handsComp();
   state.initState();
+  /*   window.addEventListener("beforeunload", () => {
+    state.setState(state.data);
+  }); */
+
   /* (.a) */ state.subscribe(() => {
     /* console.log("soy el subscribe del index", state.getState().myUserId); */
   });
@@ -32,6 +36,7 @@ import { buttonComp } from "./components/button";
       console.log(err);
     }
   });
+
 
   state.listenRooms(); */
 })();
@@ -53,10 +58,19 @@ Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar
       });
     }
   }); */
-//localStorage.removeItem("saved-data");
+/* localStorage.removeItem("saved-data"); */
 
 /* window.onbeforeunload = function () {
   localStorage.removeItem("saved-data");
   return "";
 };
  */
+
+/* 
+ids:: const opponent = lodash.find(
+  Object.keys(this.cs.currentGame),
+  (player) => player != cs.userId
+);
+this.cs.opponent = opponent; */
+/* 
+BORRAR EL LOCAL STORAGE */

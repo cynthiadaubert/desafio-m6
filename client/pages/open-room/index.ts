@@ -4,6 +4,10 @@ import { state } from "../../state";
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
     this.render();
+    /*     const currentState = state.getState();
+    console.log(currentState); */
+
+    /* state.subscribe(() => {}); */
   }
 
   render() {
@@ -132,19 +136,20 @@ class OpenRoomPage extends HTMLElement {
 
     const form = document.querySelector(".submit") as any;
 
-    form.addEventListener("submit", (e) => {
+    form!.addEventListener("submit", (e) => {
       const cs = state.getState();
       e.preventDefault();
       const target = e.target as any;
       const roomCode = target["codigo"].value;
       const rivalName = target["name"].value;
-      cs.roomId = roomCode;
-
       state.setRivalName(rivalName);
 
-      state.rivalSignUp();
+      state.rivalSignUp(() => {
+        state.listenRoom();
+        Router.go("/instructions");
+      });
 
-      state.accessExistentRoom(() => {
+      /*       state.accessExistentRoom(() => {
         state.subscribe(() => {
           if (cs.roomData[1].name && location.pathname == "/openroom") {
             Router.go("/error");
@@ -167,9 +172,9 @@ class OpenRoomPage extends HTMLElement {
             });
           }
         });
-      });
+      }); */
 
-      /*       state.accessExistentRoom(() => {
+      /*      state.accessExistentRoom(() => {
         console.log("rival name ahora", currentState.rivalName);
         if (currentState.roomData[1].name && location.pathname == "/openroom") {
           Router.go("/error");

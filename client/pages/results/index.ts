@@ -18,13 +18,16 @@ class ResultsPage extends HTMLElement {
 
     const currentState = state.getState();
 
-    //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
-    let res = state.whoWins();
+    const myMove = currentState.roomData[0].choice;
+    const rivalMove = currentState.roomData[1].choice;
 
-    if (state.whoWins() == "win") {
-      res = imageWin;
-    } else if (state.whoWins() == "lose") {
+    //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
+    let res: string = state.whoWins(myMove, rivalMove);
+
+    if (currentState.rivalName && res == "win") {
       res = imageLose;
+    } else if (currentState.rivalName && res == "lose") {
+      res = imageWin;
     } else {
       res = imageTie;
     }
@@ -36,8 +39,8 @@ class ResultsPage extends HTMLElement {
       <img class="star" src=${res}>
       <div class="score">
         <h1 class="title">Score</h1>
-        <div class="myPlay"> ${state.data.myName}:${currentState.history.me}</div>
-        <div class="computerPlay"> ${state.data.rivalName}:${currentState.history.computer}</div>
+        <div class="myPlay"> ${currentState.myName}:${currentState.history.me}</div>
+        <div class="computerPlay"> ${currentState.rivalName}:${currentState.history.computer}</div>
       </div>
 
       <button-comp class="home">Volver a jugar</button-comp>
@@ -144,11 +147,11 @@ class ResultsPage extends HTMLElement {
 
     //// COLOR DE FONDO SEGUN RESULTADO ////
 
-    let result = state.whoWins();
+    let result = state.whoWins(myMove, rivalMove);
 
-    if (state.whoWins() == "win") {
+    if (currentState.myName && result == "win") {
       result = "win";
-    } else if (state.whoWins() == "lose") {
+    } else if (currentState.myName == "lose") {
       result = "lose";
     } else {
       result = "tie";

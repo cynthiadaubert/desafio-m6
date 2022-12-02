@@ -139,6 +139,25 @@ class NewGamePage extends HTMLElement {
       if (!name) {
         alert("Ingrese nombre de usuario");
       } else {
+        state.mySignUp(() => {
+          state.askNewRoom(() => {
+            state.accessExistentRoom(() => {
+              state.listenRoom();
+            });
+            Router.go("/sharecode");
+          });
+        });
+      }
+    });
+    /* form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const target = e.target as any;
+      const name = target["nombre"].value;
+      state.setMyName(name);
+
+      if (!name) {
+        alert("Ingrese nombre de usuario");
+      } else {
         state.mySignUp(async () => {
           try {
             await state.askNewRoom();
@@ -149,7 +168,7 @@ class NewGamePage extends HTMLElement {
         });
       }
     });
-
+ */
     shadow.appendChild(div);
     shadow.appendChild(style);
   }

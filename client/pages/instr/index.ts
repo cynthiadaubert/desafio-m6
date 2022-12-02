@@ -4,17 +4,18 @@ import { state } from "../../state";
 class InstrPage extends HTMLElement {
   connectedCallback() {
     this.render();
+    const currentState = state.getState();
 
     state.accessExistentRoom();
     state.subscribe(() => {
-      const currentState = state.getState();
+      this.render();
 
       if (
         (location.pathname == "/instr" &&
           currentState.roomData[0].start == false) ||
         currentState.roomData[1].start == false
       ) {
-        console.error("Falta que el otro jugador presione start");
+        console.error("falta un jugador preparado");
       }
       if (
         currentState.roomData[0].start == true &&

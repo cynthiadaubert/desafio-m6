@@ -1,7 +1,7 @@
-type Jugada = "piedra" | "papel" | "tijera";
+type Jugada = "piedra" | "papel" | "tijera" | "null";
 
 const API_BASE_URL =
-  /* "https://desafiom6.onrender.com" || */ "http://localhost:8080";
+  /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
 
 import map from "lodash/map";
 
@@ -54,40 +54,7 @@ const state = {
     return this.data;
   },
 
-  setState(newState) {
-    this.data = newState;
-    for (const cb of this.listeners) {
-      cb();
-    }
-    localStorage.setItem(
-      "saved-data",
-      JSON.stringify(newState)
-    ); /* --->tenemos habilitada SIEMPRE la última versión */
-    console.log("Soy el state en setState, he cambiado:", this.data);
-  },
-
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LA RTDB <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-
-  listenRoom(callback?) {
-    /* ---->aca escucha todo el tiempo los jugadores en la room */
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
-    rtdbRoomRef.on("value", (snap) => {
-      const cs = this.getState();
-      const roomData = snap.val();
-      const currentGame = map(roomData);
-      cs.roomData = currentGame;
-      /*      const currentGameList = map(roomData.currentGame);
-      currentState.roomData = currentGameList; */
-      this.setState(currentState);
-      console.log("ROOM DATA:", currentGame);
-    });
-    if (callback) {
-      callback();
-    }
-  },
 
   setMyName(name?: string) {
     const currentState = this.getState();
@@ -127,7 +94,7 @@ const state = {
     }
   },
 
-  rivalSignUp() {
+  rivalSignUp(callback?) {
     const currentState = this.getState();
     if (currentState.rivalName) {
       fetch(API_BASE_URL + "/signup", {
@@ -141,14 +108,18 @@ const state = {
           return res.json();
         })
         .then((data) => {
-          console.log("soy la data del fetch SignUp", data);
+          console.log("soy la data del fetch SignUp RIVAL", data);
           currentState.rivalUserId = data.id;
+          this.setRtdbRivalValues();
           this.setState(currentState);
           /* -->cuando no hay error */
         });
     } else {
       console.error("No hay nombre en el state.data ");
       /* ---> cuando hay error */
+    }
+    if (callback) {
+      callback();
     }
   },
 
@@ -168,7 +139,7 @@ const state = {
         .then((data) => {
           console.log("soy la data del fetch asknewRoom", data);
           currentState.roomId = data.id;
-          this.accessExistentRoom();
+          /*   this.accessExistentRoom(); */
           this.setState(currentState);
           if (callback) {
             callback();
@@ -182,26 +153,43 @@ const state = {
   accessExistentRoom(callback?) {
     const currentState = this.getState();
     const roomId = currentState.roomId;
-    const userId = currentState.myUserId || currentState.rivalUserId;
-    if (userId) {
-      fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          console.log("soy la data del fetch accessExistentRoom", data);
-          currentState.rtdbRoomId = data.rtdbRoomId;
-          this.setRtdbMyValues();
-          this.setRtdbRivalValues();
-          this.setState(currentState);
-          this.listenRoom();
-          if (callback) {
-            callback();
-          }
-        });
-    } else {
-      console.error("No hay user id en el state");
-    }
+    const userId = currentState.myUserId; /* || currentState.rivalUserId */
+
+    fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("soy la data del fetch accessExistentRoom", data);
+        currentState.rtdbRoomId = data.rtdbRoomId;
+        this.setRtdbMyValues();
+        /*         this.setRtdbRivalValues(); */
+        this.listenRoom();
+        this.setState(currentState);
+        if (callback) {
+          callback();
+        }
+      });
+  },
+
+  listenRoom() {
+    /* ---->aca escucha todo el tiempo los jugadores en la room */
+    const currentState = this.getState();
+    const realtimeId = currentState.rtdbRoomId;
+    console.log("realtime", realtimeId);
+    const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbRoomId);
+    rtdbRoomRef.on("value", (snap) => {
+      const rtdbData = snap.val();
+      currentState.roomData = rtdbData;
+      currentState.rivalName = rtdbData["current-game"].playerTwo.name;
+      console.log("ROOM DATA:", rtdbData);
+      this.setState(currentState);
+      if (currentState.myName) {
+        currentState.myName = rtdbData["current-game"].playerOne.name;
+      } else if (currentState.rivalName) {
+        currentState.rivalName = rtdbData["current-game"].playerTwo.name;
+      }
+    });
   },
 
   setRtdbMyValues(callback?) {
@@ -478,16 +466,27 @@ const state = {
     }
     currentState.currentGame.myPlay = "";
     currentState.currentGame.computerPlay = "";
-    this.setState(currentState);
-
-    //// SETEA ESTE NUEVO ESTADO EN EL LOCALSTORAGE ////
-    localStorage.setItem(
-      "saved-data",
-      JSON.stringify(state.data)
+    this.setState(
+      currentState
     ); /* <-- se tiene que guardar antes todo el , en el init para guardar todos los cambios todo el tiempo */
 
+    //// SETEA ESTE NUEVO ESTADO EN EL LOCALSTORAGE ////
+    /*   localStorage.setItem("saved-data", JSON.stringify(state.data));
+     */
     //VER EL SUSCRIBE PARA CONECTAR LOS JUGADORES EN LOS COMPONENTES.
     //PUSHEAR LAS MANOS ELEGIDAS A LA RTDB
+  },
+
+  setState(newState) {
+    this.data = newState;
+    for (const cb of this.listeners) {
+      cb();
+    }
+    localStorage.setItem(
+      "saved-data",
+      JSON.stringify(newState)
+    ); /* --->tenemos habilitada SIEMPRE la última versión */
+    console.log("Soy el state en setState, he cambiado:", this.data);
   },
 
   subscribe(callback: (any) => any) {

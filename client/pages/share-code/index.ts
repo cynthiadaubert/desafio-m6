@@ -3,26 +3,26 @@ import { state } from "../../state";
 
 class ShareCodePage extends HTMLElement {
   connectedCallback() {
-    const currentState = state.getState();
-
+    /*     const currentState = state.getState(); */
+    state.setRtdbMyValues();
     state.listenRoom();
+    /* console.log(currentState, "current state en share code"); */
 
     state.subscribe(() => {
-      if (
-        currentState.roomData[0].online == true &&
-        currentState.roomData[1].online == true &&
+      /*       if (
+        currentState.roomData[1].online === true &&
         window.location.pathname == "/sharecode"
       ) {
         console.log("online");
-
-        Router.go("/instr");
-      }
+             Router.go("/instr"); 
+      } */
       this.render();
     });
   }
 
   render() {
     const currentState = state.getState();
+
     this.innerHTML = `
  
     <div class="box">
@@ -30,22 +30,18 @@ class ShareCodePage extends HTMLElement {
     
       <div class="points">
         <div class="user-box">
-          <div class="user-room">${currentState.myName}: ${state.data.history.me} </div>
+          <div class="user-room">${state.data.myName}: ${state.data.history.me} </div>
         </div>
       </div>
-
       <div class="room">
       
         <div>Sala</div>
         <div class="roomId">${currentState.roomId}</div>
       
       </div>
-
     </div>
     
-
     <h1 class="courier">Compartí el código:</h1> 
-
       <h1 class="short-code courier">${currentState.roomId}</h1>
     
     <h1 class="courier">con tu contrincante</h1>
@@ -60,12 +56,10 @@ class ShareCodePage extends HTMLElement {
 
     const style = document.createElement("style");
     style.innerHTML = `
-
     body {
       box-sizing: border-box;
       margin: 0 auto;
     }
-
     .root {
       display: flex;
       flex-direction: column;
@@ -81,7 +75,6 @@ class ShareCodePage extends HTMLElement {
       width: 100vw;
       height: 100vh;
     }
-
     @media (min-width: 769px) {
       .box {
       display: flex;
@@ -91,7 +84,6 @@ class ShareCodePage extends HTMLElement {
       padding-top: 30px;
       }
     }
-
     .info {
       font-size: 24px;
       display: flex;
@@ -100,7 +92,6 @@ class ShareCodePage extends HTMLElement {
       margin: 0;
       padding: 0;
     }
-
     @media (min-width: 769px) {
         .info {
         display: flex;
@@ -110,21 +101,17 @@ class ShareCodePage extends HTMLElement {
         margin-bottom: 120px;
       }
     }
-
     h1 {
       font-size: 35px;
     }
-
     .short-code {
       font-size: 48px;
       font-weight: bold;
     }
-
     .courier {
       font-family: Courier New;
       text-align: center;
     }
-
     @media (min-width: 769px) {
       .room {
         font-size: 24px;
@@ -142,31 +129,25 @@ class ShareCodePage extends HTMLElement {
         font-weight: bold;
       }
     }
-
     .two {
       color: #FF6442;
     }
-
     .points {
       margin-right: 100px;
       padding: 0;
     }
-
     @media (min-width: 769px) {
         .points{
         margin: 0;
         padding: 0;
       }
     }
-
     .lil {
       font-size: 24px;
     }
-
     .on {
       display: none;
     }
-
   `;
 
     this.appendChild(style);

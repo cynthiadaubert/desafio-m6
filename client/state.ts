@@ -3,6 +3,7 @@ type Jugada = "piedra" | "papel" | "tijera" | "null";
 const API_BASE_URL =
   /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
 
+import { Console } from "console";
 import map from "lodash/map";
 
 import { rtdb } from "../server/realtimeDB";
@@ -164,7 +165,7 @@ const state = {
         currentState.rtdbRoomId = data.rtdbRoomId;
         this.setRtdbMyValues();
         /*         this.setRtdbRivalValues(); */
-        this.listenRoom();
+        this.listenRoom(data.rtdbRoomId);
         this.setState(currentState);
         if (callback) {
           callback();
@@ -172,23 +173,33 @@ const state = {
       });
   },
 
-  listenRoom() {
-    /* ---->aca escucha todo el tiempo los jugadores en la room */
-    const currentState = this.getState();
-    const realtimeId = currentState.rtdbRoomId;
-    console.log("realtime", realtimeId);
-    const rtdbRoomRef = rtdb.ref("rooms/" + currentState.rtdbRoomId);
+  listenRoom(rtdbRoomId: string) {
+    console.log("room id nuevo listen rooms", rtdbRoomId);
+    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
     rtdbRoomRef.on("value", (snap) => {
       const rtdbData = snap.val();
+      const currentState = state.getState();
       currentState.roomData = rtdbData;
-      currentState.rivalName = rtdbData["current-game"].playerTwo.name;
+      const myName = rtdbData["current-game"].playerOne.name;
+      const rivalName = rtdbData["current-game"].playerTwo.name;
+      const myPlay = rtdbData["current-game"].playerOne.choice;
+      const computerPlay = rtdbData["current-game"].playerTwo.choice;
       console.log("ROOM DATA:", rtdbData);
-      this.setState(currentState);
-      if (currentState.myName) {
+      this.setState({
+        ...currentState,
+        myName,
+        rivalName,
+        myPlay,
+        computerPlay,
+      });
+
+      const newRoomData = state.getState();
+      localStorage.setItem("room-data", JSON.stringify({ ...newRoomData }));
+      /*  if (currentState.myName) {
         currentState.myName = rtdbData["current-game"].playerOne.name;
-      } else if (currentState.rivalName) {
+      }   else if (currentState.rivalName) {
         currentState.rivalName = rtdbData["current-game"].playerTwo.name;
-      }
+      } */
     });
   },
 

@@ -141,10 +141,8 @@ class NewGamePage extends HTMLElement {
       } else {
         state.mySignUp(() => {
           state.askNewRoom(() => {
-            state.accessExistentRoom(() => {
-              state.listenRoom();
-            });
-            Router.go("/sharecode");
+            state.accessExistentRoom();
+            /*         Router.go("/sharecode"); */
           });
         });
       }

@@ -145,7 +145,8 @@ class OpenRoomPage extends HTMLElement {
       state.setRivalName(rivalName);
 
       state.rivalSignUp(() => {
-        state.listenRoom();
+        ///PONER QUE SETEA LOS VALORES DE LA RTDB DEL RIVAL
+        /* state.listenRoom(); */
         Router.go("/instructions");
       });
 

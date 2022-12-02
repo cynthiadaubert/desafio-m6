@@ -5,7 +5,7 @@ class ShareCodePage extends HTMLElement {
   connectedCallback() {
     /*     const currentState = state.getState(); */
     state.setRtdbMyValues();
-    state.listenRoom();
+    /* state.listenRoom(); */
     /* console.log(currentState, "current state en share code"); */
 
     state.subscribe(() => {

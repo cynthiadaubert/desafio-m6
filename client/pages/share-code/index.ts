@@ -3,21 +3,20 @@ import { state } from "../../state";
 
 class ShareCodePage extends HTMLElement {
   connectedCallback() {
+    this.render();
     const currentState = state.getState();
     state.setRtdbMyValues();
 
-    /* state.listenRoom(); */
-    /* console.log(currentState, "current state en share code"); */
-
     state.subscribe(() => {
-      if (
-        currentState.roomData["current-game"].online === true &&
+      /*  if (
+        currentState.roomData["current-game"].playerOne.online === true &&
+        currentState.roomData["current-game"].playerTwo.online === true &&
         window.location.pathname == "/sharecode"
       ) {
         console.log("online");
-        /*       Router.go("/instr");  */
+             Router.go("/instr");  
       }
-      this.render();
+      this.render();*/
     });
   }
 

@@ -18,9 +18,9 @@ const state = {
     roomId: "",
     rtdbRoomId: "",
     myStart: false,
-    online: "",
+    online: false,
     rivalStart: false,
-    rivalOnline: "",
+    rivalOnline: false,
     roomData: {},
 
     currentGame: {
@@ -171,7 +171,7 @@ const state = {
       });
   },
 
-  listenRoom(rtdbRoomId: string) {
+  listenRoom(rtdbRoomId?: string) {
     console.log("room id nuevo listen rooms", rtdbRoomId);
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
     rtdbRoomRef.on("value", (snap) => {
@@ -182,6 +182,8 @@ const state = {
       const rivalName = rtdbData["current-game"].playerTwo.name;
       const myPlay = rtdbData["current-game"].playerOne.choice;
       const computerPlay = rtdbData["current-game"].playerTwo.choice;
+      const myStart = rtdbData["current-game"].playerOne.start;
+      const rivalStart = rtdbData["current-game"].playerTwo.start;
       console.log("ROOM DATA:", rtdbData);
       this.setState({
         ...currentState,
@@ -189,6 +191,8 @@ const state = {
         rivalName,
         myPlay,
         computerPlay,
+        myStart,
+        rivalStart,
       });
 
       const newRoomData = state.getState();
@@ -227,7 +231,7 @@ const state = {
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
 
-    if (currentState.rivalName) {
+    if (currentState.rivalName && currentState.rivalUserId) {
       rtdbRoomRef.update({
         playerTwo: {
           name: currentState.rivalName,

@@ -1,5 +1,4 @@
 import { Router } from "@vaadin/router";
-import { Console } from "console";
 import { state } from "../../state";
 
 class OpenRoomPage extends HTMLElement {
@@ -15,7 +14,6 @@ class OpenRoomPage extends HTMLElement {
     const currentState = state.getState();
 
     this.innerHTML = `
-
     <div class="box">
    
       <h1 class="title">Piedra papel o tijera</h1>
@@ -27,7 +25,6 @@ class OpenRoomPage extends HTMLElement {
       </form>
       
       <hands-comp class="hands"></hands-comp>
-
       </div>
      
     `;

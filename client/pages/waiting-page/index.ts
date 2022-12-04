@@ -7,14 +7,15 @@ class WaitingPage extends HTMLElement {
 
     this.addListeners();
     state.subscribe(() => {
-      this.render;
+      this.render();
     });
   }
 
   addListeners() {
     const currentState = state.getState();
     if (currentState.myStart && currentState.rivalStart == true) {
-      Router.go("/play");
+      console.log("PLAYERS CONNECTED");
+      /*  Router.go("/play"); */
     }
   }
   render() {

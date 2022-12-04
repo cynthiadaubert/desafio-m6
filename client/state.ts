@@ -45,7 +45,6 @@ const state = {
       this.setState(JSON.parse(localData));
     }
     /*     const localData = localStorage.getItem("saved-data");
-
     if (localData !== null) {
       this.setState(JSON.parse(localData));
     } */
@@ -268,9 +267,7 @@ const state = {
 
   setRivalStart(callback?) {
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
+    const rtdbRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
     if (currentState.rivalName && currentState.rivalUserId) {
       rtdbRoomRef.update({
         playerTwo: {
@@ -294,29 +291,23 @@ const state = {
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
-
     rtdbRoomRef.on("value", (snap) => {
       const roomData = snap.val();
       const { playerOne, playerTwo } = roomData;
-
       // If there's no opponent name, get it and save the state
       if (!rivalName && playerOne.name && playerTwo.name !== myName) {
         // Player1 is the opponent
         currentState.opponentName = playerOne.name;
-
         this.setState(currentState);
       } else if (!rivalName && playerTwo.name && playerTwo.name !== myName) {
         // Player2 is the opponent
         currentState.opponentName = playerTwo.name;
-
         this.setState(currentState);
       }
-
       // When both players are ready, go to the Game Page
       if (playerOne.ready && playerTwo.ready) {
         // Disconnect the listener
         rtdbRoomRef.off("value");
-
         if (callback) {
           callback();
         }
@@ -375,7 +366,6 @@ const state = {
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
-
     if (currentState.myName) {
       rtdbRoomRef.update({
         playerOne: {

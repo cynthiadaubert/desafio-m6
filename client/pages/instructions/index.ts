@@ -13,7 +13,6 @@ class InstructionsPage extends HTMLElement {
     const currentState = state.getState();
 
     this.innerHTML = `
-
     <div class="box">
     <div class="info">
     
@@ -23,13 +22,11 @@ class InstructionsPage extends HTMLElement {
           <div class="user-room two courier">${currentState.rivalName}: ${state.data.history.computer} </div>
         </div>
       </div>
-
       <div class="room courier">
   
         <div class="courier">Sala</div>
         <div class="roomId courier">${currentState.roomId}</div>
       </div>
-
     </div>
    
       <h1 class="text">Presioná jugar
@@ -44,18 +41,15 @@ class InstructionsPage extends HTMLElement {
 
     const style = document.createElement("style");
     style.innerHTML = `
-
     body {
       box-sizing: border-box;
       margin: 0 auto;
     }
-
     .root {
       display: flex;
       flex-direction: column;
       align-items: center;
     }
-
     .box {
       display: flex;
       flex-direction: column;
@@ -94,7 +88,6 @@ class InstructionsPage extends HTMLElement {
         margin-bottom: 35px;
       }
     }
-
     @media (min-width: 769px) {
       .room {
        font-size: 24px;
@@ -112,11 +105,9 @@ class InstructionsPage extends HTMLElement {
        font-weight: bold;
      }
    }
-
   .two {
     color: #FF6442;
   }
-
   .info {
     font-size: 24px;
     display: flex;
@@ -126,7 +117,6 @@ class InstructionsPage extends HTMLElement {
     padding: 0;
     width: 320px; 
   }
-
   @media (min-width: 769px) {
       .info {
         display: flex;
@@ -136,34 +126,29 @@ class InstructionsPage extends HTMLElement {
         margin-bottom: 120px;
     }
   }
-
   .courier{
     font-family: Courier New;
     font-size: 24px;
     font-weight: bold;
   }
-
   @media (min-width: 769px) {
       .points{
       margin: 0;
       padding: 0;
     }
   }
-
   @media (min-width: 769px) {
       .button {
       margin-bottom: 70px;
     }
   }
-
 `;
 
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
       state.setRivalStart();
-      console.log("rival is set start", currentState);
-      if (currentState.roomData.playerOne.start == false) {
+      if (currentState.roomData["current-game"].playerOne.start == false) {
         console.error("falta que un jugador esté listo");
         Router.go("/connection");
       } else {

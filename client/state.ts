@@ -152,7 +152,7 @@ const state = {
   accessExistentRoom(callback?) {
     const currentState = this.getState();
     const roomId = currentState.roomId;
-    const userId = currentState.myUserId; /* || currentState.rivalUserId */
+    const userId = currentState.myUserId || currentState.rivalUserId;
 
     fetch(API_BASE_URL + "/rooms/" + roomId + "?userId=" + userId)
       .then((res) => {
@@ -162,7 +162,7 @@ const state = {
         console.log("soy la data del fetch accessExistentRoom", data);
         currentState.rtdbRoomId = data.rtdbRoomId;
         this.setRtdbMyValues();
-        /*         this.setRtdbRivalValues(); */
+        this.setRtdbRivalValues();
         this.listenRoom(data.rtdbRoomId);
         this.setState(currentState);
         if (callback) {

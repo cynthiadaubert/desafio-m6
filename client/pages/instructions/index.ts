@@ -5,8 +5,8 @@ class InstructionsPage extends HTMLElement {
   connectedCallback() {
     const currentState = state.getState();
     this.render();
-    /*     state.listenRoom(); 
-    /*   state.subscribe(); */
+    /*       state.listenRoom();  */
+    /* state.subscribe(() => {}); */
   }
 
   render() {

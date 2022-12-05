@@ -4,19 +4,16 @@ import { state } from "../../state";
 class ShareCodePage extends HTMLElement {
   connectedCallback() {
     this.render();
-    const currentState = state.getState();
+
     state.setRtdbMyValues();
 
     state.subscribe(() => {
-      /*  if (
-        currentState.roomData["current-game"].playerOne.online === true &&
-        currentState.roomData["current-game"].playerTwo.online === true &&
-        window.location.pathname == "/sharecode"
-      ) {
+      const { rivalName } = state.getState();
+      if (rivalName != "" && window.location.pathname == "/sharecode") {
         console.log("online");
-             Router.go("/instr");  
+        Router.go("/instr");
       }
-      this.render();*/
+      this.render();
     });
   }
 

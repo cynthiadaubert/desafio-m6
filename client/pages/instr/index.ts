@@ -9,21 +9,6 @@ class InstrPage extends HTMLElement {
     state.accessExistentRoom();
     state.subscribe(() => {
       this.render();
-
-      if (
-        (location.pathname == "/instr" &&
-          currentState.roomData[0].start == false) ||
-        currentState.roomData[1].start == false
-      ) {
-        console.error("falta un jugador preparado");
-      }
-      if (
-        currentState.roomData[0].start == true &&
-        currentState.roomData[1].start == true &&
-        location.pathname == "/instr"
-      ) {
-        Router.go("/play");
-      }
     });
   }
 
@@ -179,10 +164,10 @@ class InstrPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      currentState.myStart = true;
-      if (currentState.rivalStart == false) {
+      state.setMyStart();
+      console.log("my start is true");
+      if (currentState.roomData["current-game"].playerTwo.start == false) {
         Router.go("/connection");
-        console.log("my start is true");
       } else {
         Router.go("/play");
       }

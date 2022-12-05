@@ -1,11 +1,12 @@
-import { Router } from "@vaadin/router";
 import { state } from "../../state";
+import { Router } from "@vaadin/router";
 
 class InstructionsPage extends HTMLElement {
   connectedCallback() {
     const currentState = state.getState();
     this.render();
-    /*       state.listenRoom();  */
+
+    state.setRtdbRivalValues();
     /* state.subscribe(() => {}); */
   }
 
@@ -148,10 +149,11 @@ class InstructionsPage extends HTMLElement {
 
     buttonElem.addEventListener("click", () => {
       state.setRivalStart();
-      if (currentState.roomData["current-game"].playerOne.start == false) {
+      if (currentState.myStart == false) {
         console.error("falta que un jugador esté listo");
         Router.go("/connection");
       } else {
+        console.log("los dos están listos para jugar");
         Router.go("/play");
       }
     });

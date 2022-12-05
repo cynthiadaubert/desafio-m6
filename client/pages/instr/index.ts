@@ -6,10 +6,8 @@ class InstrPage extends HTMLElement {
     this.render();
     const currentState = state.getState();
 
-    state.accessExistentRoom();
-    state.subscribe(() => {
-      this.render();
-    });
+    /*   state.accessExistentRoom(); */
+    state.subscribe(() => {});
   }
 
   render() {
@@ -160,18 +158,18 @@ class InstrPage extends HTMLElement {
   }
 
 `;
-
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
       state.setMyStart();
       console.log("my start is true");
-      if (currentState.roomData["current-game"].playerTwo.start == false) {
+      if (currentState.roomData.playerTwo.start == false) {
         Router.go("/connection");
       } else {
         Router.go("/play");
       }
     });
+
     this.appendChild(style);
   }
 }

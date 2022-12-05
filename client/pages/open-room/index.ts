@@ -152,7 +152,7 @@ class OpenRoomPage extends HTMLElement {
         state.rivalSignUp(() => {
           state.setRtdbRivalValues(() => {
             if (
-              cs.roomData["current-game"].playerTwo.name &&
+              cs.roomData.playerTwo.name &&
               location.pathname == "/openroom"
             ) {
               console.log("ya hay dos jugadores");

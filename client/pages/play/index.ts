@@ -4,6 +4,11 @@ import { state } from "../../state";
 class PlayPage extends HTMLElement {
   connectedCallback() {
     this.render();
+
+    state.subscribe(() => {
+      const currentState = state.getState();
+      console.log(currentState);
+    });
   }
 
   render() {
@@ -135,6 +140,14 @@ class PlayPage extends HTMLElement {
     const intervalId = setInterval(() => {
       countdownElem.innerHTML = `${counter}`;
       counter--;
+      if (counter < 0) {
+        clearInterval(intervalId);
+      }
+    }, 1000);
+
+    /*     const intervalId = setInterval(() => {
+      countdownElem.innerHTML = `${counter}`;
+      counter--;
       if (currentState.myName == "" && counter < 0) {
         currentState.rivalMove = "null";
         state.setState(currentState);
@@ -148,7 +161,7 @@ class PlayPage extends HTMLElement {
         Router.go("/showhands");
         clearInterval(intervalId);
       }
-    }, 1000);
+    }, 1000); */
 
     ////// TIMEOUT PARA PASAR A PAGE RESULTS //////
 

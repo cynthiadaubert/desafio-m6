@@ -173,17 +173,19 @@ const state = {
 
   listenRoom(rtdbRoomId?: string) {
     console.log("room id nuevo listen rooms", rtdbRoomId);
-    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
+    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId + "/current-game");
     rtdbRoomRef.on("value", (snap) => {
       const rtdbData = snap.val();
       const currentState = state.getState();
       currentState.roomData = rtdbData;
-      const myName = rtdbData["current-game"].playerOne.name;
-      const rivalName = rtdbData["current-game"].playerTwo.name;
-      const myPlay = rtdbData["current-game"].playerOne.choice;
-      const computerPlay = rtdbData["current-game"].playerTwo.choice;
-      const myStart = rtdbData["current-game"].playerOne.start;
-      const rivalStart = rtdbData["current-game"].playerTwo.start;
+      const myName = rtdbData.playerOne.name;
+      const rivalName = rtdbData.playerTwo.name;
+      const myPlay = rtdbData.playerOne.choice;
+      const computerPlay = rtdbData.playerTwo.choice;
+      const online = rtdbData.playerOne.online;
+      const rivalOnline = rtdbData.playerTwo.online;
+      const myStart = rtdbData.playerOne.start;
+      const rivalStart = rtdbData.playerTwo.start;
       console.log("ROOM DATA:", rtdbData);
       this.setState({
         ...currentState,
@@ -191,6 +193,8 @@ const state = {
         rivalName,
         myPlay,
         computerPlay,
+        online,
+        rivalOnline,
         myStart,
         rivalStart,
       });
@@ -251,7 +255,9 @@ const state = {
 
   setMyStart(callback?) {
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
     if (currentState.myName && currentState.myUserId) {
       rtdbRoomRef.update({
         playerOne: {
@@ -271,8 +277,10 @@ const state = {
 
   setRivalStart(callback?) {
     const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref("/rooms/" + currentState.rtdbRoomId);
-    if (currentState.rivalName && currentState.rivalUserId) {
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
+    );
+    if (currentState.rivalName /* && currentState.rivalUserId */) {
       rtdbRoomRef.update({
         playerTwo: {
           name: currentState.rivalName,
@@ -284,6 +292,7 @@ const state = {
       currentState.rivalStart = true;
     }
     this.setState(currentState);
+    console.log("el start del rival es:", currentState.rivalStart);
     if (callback) {
       callback();
     }

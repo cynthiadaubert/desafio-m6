@@ -4,20 +4,21 @@ import { state } from "../../state";
 class WaitingPage extends HTMLElement {
   connectedCallback() {
     this.render();
+    state.listenRoom(state.data.rtdbRoomId);
 
-    this.addListeners();
+    /*   this.addListeners(); */
     state.subscribe(() => {
-      this.render();
+      const currentState = state.getState();
+      if (currentState.myStart && currentState.rivalStart == true) {
+        console.log("PLAYERS CONNECTED");
+        Router.go("/play");
+      }
     });
   }
 
-  addListeners() {
-    const currentState = state.getState();
-    if (currentState.myStart && currentState.rivalStart == true) {
-      console.log("PLAYERS CONNECTED");
-      /*  Router.go("/play"); */
-    }
-  }
+  /*   addListeners() {
+   
+  } */
   render() {
     const currentState = state.getState();
 

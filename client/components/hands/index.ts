@@ -15,11 +15,23 @@ export function handsComp() {
       constructor() {
         super();
         this.shadow = this.attachShadow({ mode: "open" });
-        /* this.type = this.getAttribute("type") */
       }
 
       connectedCallback() {
         this.render();
+      }
+
+      addListeners() {
+        const handImg: any = document.querySelector(".hand");
+
+        this.addEventListener("click", () => {
+          const handSelectedEvent = new CustomEvent("handClick", {
+            detail: {
+              handMove: this.getAttribute("hand"),
+            },
+          });
+          this.dispatchEvent(handSelectedEvent);
+        });
       }
 
       render() {
@@ -30,9 +42,9 @@ export function handsComp() {
 
         div.innerHTML = `
   
-          <img variant="selected" class="piedra" src=${imagePiedraURL}>
-          <img variant="selected" class="papel" src=${imagePapelURL}>
-          <img variant="selected" class="tijera" src=${imageTijeraURL}>
+          <img variant="selected" class="piedra hand" src=${imagePiedraURL}>
+          <img variant="selected" class="papel hand" src=${imagePapelURL}>
+          <img variant="selected" class="tijera hand" src=${imageTijeraURL}>
   
         `;
 
@@ -78,86 +90,51 @@ export function handsComp() {
         const papel: any = div.querySelector(".papel");
         const tijera: any = div.querySelector(".tijera");
 
-        /*         if (
-          currentState.myName == "" &&
-          currentState.currentGame.computerPlay == ""
-        ) {
-          state.setRivalMove("");
-        } else if (
-          currentState.rivalName == "" &&
-          currentState.currentGame.myPlay == ""
-        ) {
-          state.setMyMove("");
-        } */
+        const handsSelect = div.querySelectorAll("hand");
 
-        if (
-          currentState.myName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
+        handsSelect.forEach((hand) => {
+          hand.addEventListener("handClick", (e: any) => {
+            const choice = e.detail.handMove;
+
+            if (currentState.owner == currentState.myName) {
+              state.setMyMove(choice);
+            } else {
+              state.setRivalMove(choice);
+            }
+          });
+        });
+
+        if (this.getAttribute("variant") == "selected") {
           piedra.addEventListener("click", () => {
             papel.classList.add("transparent");
             tijera.classList.add("transparent");
-            state.setRivalMove("piedra");
-            console.log("el rival eligio piedra");
-          });
-        } else if (
-          currentState.rivalName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
-          piedra.addEventListener("click", () => {
-            papel.classList.add("transparent");
-            tijera.classList.add("transparent");
-            state.setMyMove("piedra");
-            console.log("elegiste piedra");
+            state.setMovetoRtdb("piedra");
+            state.setMoveState("piedra");
+            console.log("piedra");
           });
         }
-
-        if (
-          currentState.myName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
+        if (this.getAttribute("variant") == "selected") {
           papel.addEventListener("click", () => {
             piedra.classList.add("transparent");
             tijera.classList.add("transparent");
-            state.setRivalMove("papel");
-            console.log("el rival eligio papel");
-          });
-        } else if (
-          currentState.rivalName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
-          papel.addEventListener("click", () => {
-            piedra.classList.add("transparent");
-            tijera.classList.add("transparent");
-            state.setMyMove("papel");
-            console.log("elejiste papel");
+            state.setMovetoRtdb("papel");
+            state.setMoveState("papel");
+            console.log("papel");
           });
         }
-
-        if (
-          currentState.myName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
+        if (this.getAttribute("variant") == "selected") {
           tijera.addEventListener("click", () => {
             papel.classList.add("transparent");
             piedra.classList.add("transparent");
-            state.setRivalMove("tijera");
-            console.log("el rival eligio tijera");
-          });
-        } else if (
-          currentState.rivalName == "" &&
-          this.getAttribute("variant") == "selected"
-        ) {
-          tijera.addEventListener("click", () => {
-            papel.classList.add("transparent");
-            piedra.classList.add("transparent");
-            state.setMyMove("tijera");
-            console.log("lelegiste tijera");
+            state.setMovetoRtdb("tijera");
+            state.setMoveState("tijera");
+            console.log("tijera");
           });
         }
 
         this.shadow.appendChild(style);
         this.shadow.appendChild(div);
+        this.addListeners();
       }
     }
   );

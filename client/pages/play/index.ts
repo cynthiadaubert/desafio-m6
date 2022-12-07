@@ -4,11 +4,15 @@ import { state } from "../../state";
 class PlayPage extends HTMLElement {
   connectedCallback() {
     this.render();
+    const currentState = state.getState();
+    const room = currentState.rtdbRoomId;
+    console.log("STATE DE PLAY PAGE", currentState.roomData);
 
-    state.subscribe(() => {
-      const currentState = state.getState();
-      console.log(currentState);
-    });
+    /* state.playerChoices(room); */
+
+    /*     state.subscribe(() => {
+      
+    }); */
   }
 
   render() {
@@ -19,11 +23,7 @@ class PlayPage extends HTMLElement {
     div.innerHTML = `
  
     <div class=circle></div>
-
- 
       <hands-comp class="hands" variant="selected"></hands-comp>
-    
-  
   `;
     //////* ESTILOS *//////
 
@@ -170,7 +170,7 @@ class PlayPage extends HTMLElement {
     handsContainer.addEventListener("click", () => {
       clearInterval(intervalId);
       setTimeout(() => {
-        Router.go("/showhands");
+        /*   Router.go("/showhands"); */
       }, 1000);
     });
 

@@ -55,7 +55,9 @@ app.post("/rooms", (req, res) => {
           .set({
             owner: playerData.name,
             ownerId: userId,
+
             "current-game": {
+              moves: {},
               playerOne: {
                 name: "",
                 id: "",

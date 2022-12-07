@@ -3,7 +3,6 @@ type Jugada = "piedra" | "papel" | "tijera" | "null";
 const API_BASE_URL =
   /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
 
-import { Console } from "console";
 import map from "lodash/map";
 
 import { rtdb } from "../server/realtimeDB";
@@ -22,6 +21,7 @@ const state = {
     rivalStart: false,
     rivalOnline: false,
     roomData: {},
+    owner: "",
 
     currentGame: {
       computerPlay: "",
@@ -169,6 +169,22 @@ const state = {
           callback();
         }
       });
+  },
+
+  playerChoices(rtdbRoomId?: string) {
+    const currentState = this.getState();
+    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
+    rtdbRoomRef.get().then((snap) => {
+      const rtdbData = snap.val();
+      const myChoice = rtdbData["current-game"].playerOne.start;
+      const rivalChoice = rtdbData["current-game"].playerTwo.start;
+      console.log("RTDB COMPLETA", myChoice, rivalChoice);
+
+      if (currentState.myUserId == rtdbData.ownerId) {
+        currentState.owner = currentState.myName;
+      }
+      this.setState(currentState);
+    });
   },
 
   listenRoom(rtdbRoomId?: string) {
@@ -330,8 +346,31 @@ const state = {
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
+  setMoveState(move: Jugada) {
+    const currentState = this.getState();
+    currentState.move = move;
+    this.setState(currentState);
+  },
+
+  setMovetoRtdb(move: Jugada) {
+    const currentState = this.getState();
+    const rtdbRoomRef = rtdb.ref(
+      "/rooms/" + currentState.rtdbRoomId + "/moves"
+    );
+
+    rtdbRoomRef.update({
+      moves: [move],
+    });
+
+    this.setState(currentState);
+  },
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
   setMyMove(move: Jugada) {
+    const currentState = this.getState();
+    currentState.currentGame.myPlay = move;
+    this.setState(currentState);
+  },
+  /*   setMyMove(move: Jugada) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
@@ -351,7 +390,7 @@ const state = {
     }
     this.pushToHistory();
     this.setState(currentState);
-  },
+  }, */
   setRivalMove(move: Jugada) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(

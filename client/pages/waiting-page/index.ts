@@ -4,16 +4,26 @@ import { state } from "../../state";
 class WaitingPage extends HTMLElement {
   connectedCallback() {
     this.render();
-    /*     state.listenRoom(state.data.rtdbRoomId); */
+    state.listenRoom(state.data.rtdbRoomId);
 
     state.subscribe(() => {
-      const { myStart, rivalStart } = state.getState();
+      const { roomData } = state.getState();
 
-      if (myStart == true && rivalStart == true) {
+      if (
+        (location.pathname == "/connection" &&
+          roomData.playerOne.start == false) ||
+        roomData.playerTwo.start == false
+      ) {
+        console.error("falta un jugador");
+      }
+      if (
+        roomData.playerOne.start == true &&
+        roomData.playerTwo.start == true &&
+        location.pathname == "/connection"
+      ) {
         console.log("PLAYERS CONNECTED");
         Router.go("/play");
       }
-      this.render();
     });
   }
 

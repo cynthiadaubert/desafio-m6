@@ -150,6 +150,7 @@ class InstructionsPage extends HTMLElement {
 
     buttonElem.addEventListener("click", () => {
       state.setRivalStart();
+
       console.log("rival start is true");
       if (
         currentState.myStart == true &&

@@ -90,45 +90,59 @@ export function handsComp() {
         const papel: any = div.querySelector(".papel");
         const tijera: any = div.querySelector(".tijera");
 
-        const handsSelect = div.querySelectorAll("hand");
+        /*         const handsSelect = div.querySelectorAll("hand");
 
         handsSelect.forEach((hand) => {
           hand.addEventListener("handClick", (e: any) => {
             const choice = e.detail.handMove;
 
-            if (currentState.owner == currentState.myName) {
+            if (currentState.isPlayerOne == true) {
               state.setMyMove(choice);
+              console.log(choice);
             } else {
               state.setRivalMove(choice);
+              console.log(choice);
             }
           });
-        });
+        }); */
 
         if (this.getAttribute("variant") == "selected") {
           piedra.addEventListener("click", () => {
             papel.classList.add("transparent");
             tijera.classList.add("transparent");
-            state.setMovetoRtdb("piedra");
-            state.setMoveState("piedra");
-            console.log("piedra");
+            if (currentState.isPlayerOne == true) {
+              state.setMyMove("piedra");
+              console.log("piedra, fue el jdr 1");
+            } else {
+              state.setRivalMove("piedra");
+              console.log("piedra, jugador 2");
+            }
           });
         }
         if (this.getAttribute("variant") == "selected") {
           papel.addEventListener("click", () => {
             piedra.classList.add("transparent");
             tijera.classList.add("transparent");
-            state.setMovetoRtdb("papel");
-            state.setMoveState("papel");
-            console.log("papel");
+            if (currentState.isPlayerOne == true) {
+              state.setMyMove("papel");
+              console.log("papel, fue el jdr 1");
+            } else {
+              state.setRivalMove("papel");
+              console.log("papel, jugador 2");
+            }
           });
         }
         if (this.getAttribute("variant") == "selected") {
           tijera.addEventListener("click", () => {
             papel.classList.add("transparent");
             piedra.classList.add("transparent");
-            state.setMovetoRtdb("tijera");
-            state.setMoveState("tijera");
-            console.log("tijera");
+            if (currentState.isPlayerOne == true) {
+              state.setMyMove("tijera");
+              console.log("tijera, fue el jdr 1");
+            } else {
+              state.setRivalMove("tijera");
+              console.log("tijera, jugador 2");
+            }
           });
         }
 

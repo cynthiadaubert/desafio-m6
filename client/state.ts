@@ -21,7 +21,8 @@ const state = {
     rivalStart: false,
     rivalOnline: false,
     roomData: {},
-    owner: "",
+    isPlayerOne: false,
+    isPlayerTwo: false,
 
     currentGame: {
       computerPlay: "",
@@ -314,6 +315,18 @@ const state = {
     }
   },
 
+  imThePlayerOne() {
+    const currentState = this.getState();
+    currentState.isPlayerOne = true;
+    this.setState(currentState);
+  },
+
+  imThePlayerTwo() {
+    const currentState = this.getState();
+    currentState.isPlayerTwo = true;
+    this.setState(currentState);
+  },
+
   /*   listenStart(callback?) {
     const currentState = this.getState();
     const { myName, rivalName } = currentState;
@@ -346,7 +359,7 @@ const state = {
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
 
-  setMoveState(move: Jugada) {
+  /*   setMoveState(move: Jugada) {
     const currentState = this.getState();
     currentState.move = move;
     this.setState(currentState);
@@ -363,14 +376,11 @@ const state = {
     });
 
     this.setState(currentState);
-  },
+  }, */
+
   //// SETEA MOVIMIENTOS DE LAS MANOS ////
+
   setMyMove(move: Jugada) {
-    const currentState = this.getState();
-    currentState.currentGame.myPlay = move;
-    this.setState(currentState);
-  },
-  /*   setMyMove(move: Jugada) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
@@ -382,15 +392,15 @@ const state = {
           name: currentState.myName,
           id: currentState.myUserId,
           online: true,
-          start: false,
-          move,
+          start: true,
+          choice: move,
         },
       });
       currentState.currentGame.myPlay = move;
     }
-    this.pushToHistory();
+    /*   this.pushToHistory(); */
     this.setState(currentState);
-  }, */
+  },
   setRivalMove(move: Jugada) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(
@@ -399,17 +409,17 @@ const state = {
 
     if (currentState.rivalName) {
       rtdbRoomRef.update({
-        playerOne: {
+        playerTwo: {
           name: currentState.rivalName,
           id: currentState.rivalUserId,
           online: true,
-          start: false,
-          move,
+          start: true,
+          choice: move,
         },
       });
       currentState.currentGame.computerPlay = move;
     }
-    this.pushToHistory();
+    /* this.pushToHistory(); */
     this.setState(currentState);
   },
 
@@ -447,13 +457,19 @@ const state = {
   whoWins(myPlay: Jugada, computerPlay: Jugada) {
     const currentState = this.getState();
 
-    const ganeConTijeras = myPlay == "tijera" && computerPlay == "papel";
-    const ganeConPiedra = myPlay == "piedra" && computerPlay == "tijera";
-    const ganeConPapel = myPlay == "papel" && computerPlay == "piedra";
+    const ganeConTijeras =
+      myPlay == "tijera" && computerPlay == ("papel" || "null");
+    const ganeConPiedra =
+      myPlay == "piedra" && computerPlay == ("tijera" || "null");
+    const ganeConPapel =
+      myPlay == "papel" && computerPlay == ("piedra" || "null");
 
-    const pcGanaTijeras = myPlay == "papel" && computerPlay == "tijera";
-    const pcGanaPiedra = myPlay == "tijera" && computerPlay == "piedra";
-    const pcGanaPapel = myPlay == "piedra" && computerPlay == "papel";
+    const pcGanaTijeras =
+      myPlay == ("papel" || "null") && computerPlay == "tijera";
+    const pcGanaPiedra =
+      myPlay == ("tijera" || "null") && computerPlay == "piedra";
+    const pcGanaPapel =
+      myPlay == ("piedra" || "null") && computerPlay == "papel";
 
     const win = [ganeConTijeras || ganeConPiedra || ganeConPapel].includes(
       true
@@ -464,17 +480,25 @@ const state = {
 
     if (win == true) {
       currentState.history.me++;
+      currentState.roomData.history.playerOne++;
       result = "win";
     } else if (lose == true) {
       currentState.history.computer++;
+      currentState.roomData.history.playerTwo++;
       result = "lose";
     } else {
       result = "tie";
+      currentState.roomData.history.playerOne += 0;
+      currentState.roomData.history.playerTwo += 0;
     }
 
+    this.setState(currentState);
+    return result;
+
+    /* 
     const roomId = currentState.roomId;
 
-    fetch(API_BASE_URL + "/rooms" + roomId, {
+    fetch(API_BASE_URL + "/rooms/" + roomId, {
       method: "post",
       headers: {
         "content-type": "application/json",
@@ -485,7 +509,7 @@ const state = {
         return res.json();
       })
       .then((data) => {});
-    return result;
+    return result; */
   },
 
   restartPoints() {
@@ -500,6 +524,7 @@ const state = {
           name: currentState.myName,
           online: true,
           start: false,
+          score: "",
         },
       });
     }
@@ -510,6 +535,7 @@ const state = {
           name: currentState.rivalName,
           online: true,
           start: false,
+          score: "",
         },
       });
     }

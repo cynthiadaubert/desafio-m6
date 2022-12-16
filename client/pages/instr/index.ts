@@ -1,12 +1,13 @@
 import { Router } from "@vaadin/router";
+import e from "express";
 import { state } from "../../state";
 
 class InstrPage extends HTMLElement {
   connectedCallback() {
     this.render();
     const currentState = state.getState();
+    state.imThePlayerOne();
 
-    /*   state.accessExistentRoom(); */
     state.subscribe(() => {});
   }
 

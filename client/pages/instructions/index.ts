@@ -3,11 +3,12 @@ import { Router } from "@vaadin/router";
 
 class InstructionsPage extends HTMLElement {
   connectedCallback() {
-    const currentState = state.getState();
     this.render();
+    const currentState = state.getState();
+    state.imThePlayerTwo();
 
     state.setRtdbRivalValues();
-    /* state.subscribe(() => {}); */
+    state.subscribe(() => {});
   }
 
   render() {
@@ -149,12 +150,20 @@ class InstructionsPage extends HTMLElement {
 
     buttonElem.addEventListener("click", () => {
       state.setRivalStart();
-      if (currentState.myStart == false) {
+      console.log("rival start is true");
+      if (
+        currentState.myStart == true &&
+        location.pathname == "/instructions"
+      ) {
+        console.log("los dos están listos para jugar");
+
+        Router.go("/play");
+      } else if (
+        currentState.myStart == false &&
+        location.pathname == "/instructions"
+      ) {
         console.error("falta que un jugador esté listo");
         Router.go("/connection");
-      } else {
-        console.log("los dos están listos para jugar");
-        Router.go("/play");
       }
     });
 

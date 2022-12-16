@@ -13,6 +13,6 @@ router.setRoutes([
   { path: "/instr", component: "instr-page" },
   { path: "/play", component: "play-page" },
   { path: "/showhands", component: "showhands-page" },
-  { path: "/result", component: "results-page" },
+  { path: "/results", component: "results-page" },
   { path: "/error", component: "error-page" },
 ]);

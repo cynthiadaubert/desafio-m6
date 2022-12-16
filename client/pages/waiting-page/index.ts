@@ -4,29 +4,25 @@ import { state } from "../../state";
 class WaitingPage extends HTMLElement {
   connectedCallback() {
     this.render();
-    state.listenRoom(state.data.rtdbRoomId);
+    /*     state.listenRoom(state.data.rtdbRoomId); */
 
-    /*   this.addListeners(); */
     state.subscribe(() => {
-      const currentState = state.getState();
-      if (currentState.myStart && currentState.rivalStart == true) {
+      const { myStart, rivalStart } = state.getState();
+
+      if (myStart == true && rivalStart == true) {
         console.log("PLAYERS CONNECTED");
         Router.go("/play");
       }
+      this.render();
     });
   }
 
-  /*   addListeners() {
-   
-  } */
   render() {
     const currentState = state.getState();
 
-    let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box";
+    this.className = "box";
 
-    div.innerHTML = `
+    this.innerHTML = `
  
     <div class="info">
     
@@ -171,8 +167,8 @@ class WaitingPage extends HTMLElement {
 
   `;
 
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    /*  this.appendChild(div); */
+    this.appendChild(style);
   }
 }
 customElements.define("waiting-page", WaitingPage);

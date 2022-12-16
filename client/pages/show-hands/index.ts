@@ -4,6 +4,10 @@ import { state } from "../../state";
 class HandsPage extends HTMLElement {
   connectedCallback() {
     this.render();
+
+    const currentState = state.getState();
+    state.listenRoom(currentState.rtdbRoomId);
+    state.subscribe(() => {});
   }
 
   render() {
@@ -16,8 +20,8 @@ class HandsPage extends HTMLElement {
     div.className = "box";
 
     const currentState = state.getState();
-    const playerPlay = currentState.currentGame.myPlay;
-    const pcPlay = currentState.currentGame.computerPlay;
+    const playerPlay = currentState.roomData.playerOne.choice;
+    const pcPlay = currentState.roomData.playerTwo.choice;
 
     ////// COMPROBAR MOVIMIENTOS PARA MOSTRAR MANOS //////
 
@@ -84,6 +88,48 @@ class HandsPage extends HTMLElement {
         
         `;
     }
+    if (playerPlay == undefined && pcPlay == "papel") {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imagePapelURL}>
+        <img class="player-hand" src=${imagePapelURL}>
+        
+        `;
+    }
+    if (playerPlay == undefined && pcPlay == "piedra") {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imagePiedraURL}>
+        <img class="player-hand" src=${imagePiedraURL}>
+        
+        `;
+    }
+    if (playerPlay == undefined && pcPlay == "tijera") {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imageTijeraURL}>
+        <img class="player-hand" src=${imageTijeraURL}>
+        
+        `;
+    }
+    if (playerPlay == "piedra" && pcPlay == undefined) {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imagePiedraURL}>
+        <img class="player-hand" src=${imagePiedraURL}>
+        
+        `;
+    }
+    if (playerPlay == "papel" && pcPlay == undefined) {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imagePapelURL}>
+        <img class="player-hand" src=${imagePapelURL}>
+        
+        `;
+    }
+    if (playerPlay == "tijera" && pcPlay == undefined) {
+      div.innerHTML = `
+        <img class="computer-hand" src=${imageTijeraURL}>
+        <img class="player-hand" src=${imageTijeraURL}>
+        
+        `;
+    }
 
     ///////// ESTILOS /////////////
 
@@ -130,7 +176,7 @@ class HandsPage extends HTMLElement {
     ////// PASAR A LA PÁGINA FINAL ///////
 
     setTimeout(() => {
-      /* Router.go("/results"); */
+      Router.go("/results");
     }, 3000);
 
     shadow.appendChild(div);

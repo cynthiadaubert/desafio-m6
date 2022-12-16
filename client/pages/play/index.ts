@@ -5,14 +5,13 @@ class PlayPage extends HTMLElement {
   connectedCallback() {
     this.render();
     const currentState = state.getState();
-    const room = currentState.rtdbRoomId;
-    console.log("STATE DE PLAY PAGE", currentState.roomData);
+
+    /*     const room = currentState.rtdbRoomId;
+    console.log("STATE DE PLAY PAGE", currentState.roomData); */
 
     /* state.playerChoices(room); */
-
-    /*     state.subscribe(() => {
-      
-    }); */
+    /* 
+    state.subscribe(() => {}); */
   }
 
   render() {
@@ -141,27 +140,23 @@ class PlayPage extends HTMLElement {
       countdownElem.innerHTML = `${counter}`;
       counter--;
       if (counter < 0) {
+        if (
+          currentState.isPlayerOne == true &&
+          currentState.currentGame.myPlay == ""
+        ) {
+          state.setMyMove("null");
+          console.log("soy null");
+        } else if (
+          currentState.isPlayerTwo == true &&
+          currentState.currentGame.computerPlay == ""
+        ) {
+          state.setRivalMove("null");
+          console.log("el rival es null");
+        }
         clearInterval(intervalId);
+        Router.go("/results");
       }
     }, 1000);
-
-    /*     const intervalId = setInterval(() => {
-      countdownElem.innerHTML = `${counter}`;
-      counter--;
-      if (currentState.myName == "" && counter < 0) {
-        currentState.rivalMove = "null";
-        state.setState(currentState);
-        console.log("elegiste null");
-        Router.go("/showhands");
-        clearInterval(intervalId);
-      } else if (currentState.rivalName == "" && counter < 0) {
-        currentState.myMove = "null";
-        state.setState(currentState);
-        console.log("rival eligio null");
-        Router.go("/showhands");
-        clearInterval(intervalId);
-      }
-    }, 1000); */
 
     ////// TIMEOUT PARA PASAR A PAGE RESULTS //////
 
@@ -170,7 +165,7 @@ class PlayPage extends HTMLElement {
     handsContainer.addEventListener("click", () => {
       clearInterval(intervalId);
       setTimeout(() => {
-        /*   Router.go("/showhands"); */
+        Router.go("/showhands");
       }, 1000);
     });
 

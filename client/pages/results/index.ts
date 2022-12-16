@@ -18,15 +18,19 @@ class ResultsPage extends HTMLElement {
 
     const currentState = state.getState();
 
-    const myMove = currentState.roomData[0].choice;
-    const rivalMove = currentState.roomData[1].choice;
+    const myMove = currentState.roomData.playerOne.choice;
+    const rivalMove = currentState.roomData.playerTwo.choice;
 
     //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
     let res: string = state.whoWins(myMove, rivalMove);
 
-    if (currentState.rivalName && res == "win") {
+    if (currentState.isPlayerOne == true && res == "win") {
+      res = imageWin;
+    } else if (currentState.isPlayerOne == true && res == "lose") {
       res = imageLose;
-    } else if (currentState.rivalName && res == "lose") {
+    } else if (currentState.isPlayerTwo == true && res == "win") {
+      res = imageLose;
+    } else if (currentState.isPlayerTwo == true && res == "lose") {
       res = imageWin;
     } else {
       res = imageTie;
@@ -149,10 +153,14 @@ class ResultsPage extends HTMLElement {
 
     let result = state.whoWins(myMove, rivalMove);
 
-    if (currentState.myName && result == "win") {
+    if (currentState.isPlayerOne == true && result == "win") {
       result = "win";
-    } else if (currentState.myName == "lose") {
+    } else if (currentState.isPlayerOne == true && result == "lose") {
       result = "lose";
+    } else if (currentState.isPlayerTwo == true && result == "win") {
+      result = "lose";
+    } else if (currentState.isPlayerTwo == true && result == "lose") {
+      result = "win";
     } else {
       result = "tie";
     }
@@ -163,7 +171,9 @@ class ResultsPage extends HTMLElement {
 
     const buttonElem: any = box.querySelector(".home");
     buttonElem.addEventListener("click", () => {
-      Router.go("/play");
+      state.setMyStart();
+      state.setRivalStart();
+      Router.go("/connection");
     });
 
     const buttonReset: any = box.querySelector(".reset");

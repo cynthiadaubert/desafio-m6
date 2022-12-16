@@ -57,7 +57,6 @@ app.post("/rooms", (req, res) => {
             ownerId: userId,
 
             "current-game": {
-              moves: {},
               playerOne: {
                 name: "",
                 id: "",
@@ -74,6 +73,7 @@ app.post("/rooms", (req, res) => {
                 online: false,
                 start: false,
               },
+              history: { playerOne: 0, playerTwo: 0 },
             },
           })
           .then(() => {
@@ -123,12 +123,51 @@ app.get("/rooms/:roomId", (req, res) => {
     });
 });
 
-// ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
-app.post("/score", (req, res) => {
-  const { result, rtdbId } = req.body;
-  const rtdbPlayersCollection = rtdb.ref("rooms/" + rtdbId + "/current-game");
+//? Devuelve un arreglo con los datos de los usuarios existentes.
+app.get("/users", (req, res) => {
+  playerCollection.get().then((playersData) => {
+    const docs = playersData.docs;
+    const players = docs.map((doc) => {
+      return doc.data();
+    });
+    res.status(200).send({
+      ...players,
+    });
+  });
+});
 
-  rtdbPlayersCollection.on("value", (snap) => {
+// ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
+app.post("/rooms/:roomId", (req, res) => {
+  const { roomId } = req.params;
+  const { result } = req.body;
+  /*   const rtdbPlayersCollection = rtdb.ref("rooms/" + roomId + "/current-game"); */
+
+  playroomCollection
+    .doc(roomId.toString())
+    .get()
+    .then((room) => {
+      if (room.exists) {
+        const roomData = room.data();
+
+        if (result == "win") {
+          roomData.history.playerOne += 1;
+        }
+        if (result == "lose") {
+          roomData.history.playerTwo += 1;
+        }
+        if (result == "tie") {
+          (roomData.history.playerOne += 0), (roomData.history.playerTwo += 0);
+        }
+        playroomCollection.doc(roomId.toString()).update(roomData);
+        res.json(roomData);
+      } else {
+        res.status(404).json({
+          message: "La room n0o existe",
+        });
+      }
+    });
+
+  /*   rtdbPlayersCollection.on("value", (snap) => {
     const roomData = snap.val();
     const { playerOne } = roomData;
 
@@ -143,7 +182,7 @@ app.post("/score", (req, res) => {
     res.status(200).json({
       message: "Puntajes actualizados",
     });
-  });
+  }); */
 });
 
 // Ejecutar express static y escuchar el puerto //

@@ -3,23 +3,15 @@ import { state } from "../../state";
 
 class PlayPage extends HTMLElement {
   connectedCallback() {
+    state.subscribe(() => {});
     this.render();
-    const currentState = state.getState();
-
-    /*     const room = currentState.rtdbRoomId;
-    console.log("STATE DE PLAY PAGE", currentState.roomData); */
-
-    /* state.playerChoices(room); */
-    /* 
-    state.subscribe(() => {}); */
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "container-play";
+    /*    const div = document.createElement("div"); */
+    this.className = "container-play";
 
-    div.innerHTML = `
+    this.innerHTML = `
  
     <div class=circle></div>
       <hands-comp class="hands" variant="selected"></hands-comp>
@@ -128,39 +120,26 @@ class PlayPage extends HTMLElement {
 
   `;
 
-    ///// CUENTA ATRÁS DEL CÍRCULO Y VOLVER A INSTRUCTIONS ////
+    ///// CUENTA ATRÁS DEL CÍRCULO ////
 
     const currentState = state.getState();
 
-    let counter = 3;
+    let counter = 5;
 
-    const countdownElem = div.querySelector(".circle") as any;
+    const countdownElem = document.querySelector(".circle") as any;
 
     const intervalId = setInterval(() => {
       countdownElem.innerHTML = `${counter}`;
       counter--;
       if (counter < 0) {
-        if (
-          currentState.isPlayerOne == true &&
-          currentState.currentGame.myPlay == ""
-        ) {
-          state.setMyMove("null");
-          console.log("soy null");
-        } else if (
-          currentState.isPlayerTwo == true &&
-          currentState.currentGame.computerPlay == ""
-        ) {
-          state.setRivalMove("null");
-          console.log("el rival es null");
-        }
         clearInterval(intervalId);
         Router.go("/results");
       }
     }, 1000);
 
-    ////// TIMEOUT PARA PASAR A PAGE RESULTS //////
+    ////// TIMEOUT PARA PASAR A LAS MANOS //////
 
-    const handsContainer: any = div.querySelector(".hands");
+    const handsContainer: any = document.querySelector(".hands");
 
     handsContainer.addEventListener("click", () => {
       clearInterval(intervalId);
@@ -169,8 +148,8 @@ class PlayPage extends HTMLElement {
       }, 1000);
     });
 
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    /* shadow.appendChild(div); */
+    this.appendChild(style);
   }
 }
 customElements.define("play-page", PlayPage);

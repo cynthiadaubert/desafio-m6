@@ -21,19 +21,6 @@ export function handsComp() {
         this.render();
       }
 
-      addListeners() {
-        const handImg: any = document.querySelector(".hand");
-
-        this.addEventListener("click", () => {
-          const handSelectedEvent = new CustomEvent("handClick", {
-            detail: {
-              handMove: this.getAttribute("hand"),
-            },
-          });
-          this.dispatchEvent(handSelectedEvent);
-        });
-      }
-
       render() {
         const currentState = state.getState();
         const div = document.createElement("div");
@@ -90,32 +77,16 @@ export function handsComp() {
         const papel: any = div.querySelector(".papel");
         const tijera: any = div.querySelector(".tijera");
 
-        /*         const handsSelect = div.querySelectorAll("hand");
-
-        handsSelect.forEach((hand) => {
-          hand.addEventListener("handClick", (e: any) => {
-            const choice = e.detail.handMove;
-
-            if (currentState.isPlayerOne == true) {
-              state.setMyMove(choice);
-              console.log(choice);
-            } else {
-              state.setRivalMove(choice);
-              console.log(choice);
-            }
-          });
-        }); */
-
         if (this.getAttribute("variant") == "selected") {
           piedra.addEventListener("click", () => {
             papel.classList.add("transparent");
             tijera.classList.add("transparent");
             if (currentState.isPlayerOne == true) {
               state.setMyMove("piedra");
-              console.log("piedra, fue el jdr 1");
+              console.log("piedra, JUGADOR 1");
             } else {
               state.setRivalMove("piedra");
-              console.log("piedra, jugador 2");
+              console.log("piedra, JUGADOR 2");
             }
           });
         }
@@ -125,7 +96,7 @@ export function handsComp() {
             tijera.classList.add("transparent");
             if (currentState.isPlayerOne == true) {
               state.setMyMove("papel");
-              console.log("papel, fue el jdr 1");
+              console.log("papel, JUGADOR 1");
             } else {
               state.setRivalMove("papel");
               console.log("papel, jugador 2");
@@ -138,7 +109,7 @@ export function handsComp() {
             piedra.classList.add("transparent");
             if (currentState.isPlayerOne == true) {
               state.setMyMove("tijera");
-              console.log("tijera, fue el jdr 1");
+              console.log("tijera, JUGADOR 1");
             } else {
               state.setRivalMove("tijera");
               console.log("tijera, jugador 2");
@@ -148,7 +119,6 @@ export function handsComp() {
 
         this.shadow.appendChild(style);
         this.shadow.appendChild(div);
-        this.addListeners();
       }
     }
   );

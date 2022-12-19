@@ -8,7 +8,7 @@ class InstructionsPage extends HTMLElement {
     state.imThePlayerTwo();
 
     state.setRtdbRivalValues();
-    state.subscribe(() => {});
+    /*    state.subscribe(() => {}); */
   }
 
   render() {
@@ -149,10 +149,12 @@ class InstructionsPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      state.setRivalStart();
-
+      state.setRivalStart(() => {
+        Router.go("/connection");
+      });
       console.log("rival start is true");
-      if (
+
+      /*       if (
         currentState.myStart == true &&
         location.pathname == "/instructions"
       ) {
@@ -165,7 +167,7 @@ class InstructionsPage extends HTMLElement {
       ) {
         console.error("falta que un jugador esté listo");
         Router.go("/connection");
-      }
+      } */
     });
 
     this.appendChild(style);

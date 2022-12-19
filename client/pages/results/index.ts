@@ -1,5 +1,4 @@
 import { Router } from "@vaadin/router";
-
 import { state } from "../../state";
 
 const imageWin = require("url:../../img/ganaste.png");
@@ -9,6 +8,24 @@ const imageTie = require("url:../../img/empate.png");
 class ResultsPage extends HTMLElement {
   connectedCallback() {
     this.render();
+
+    state.subscribe(() => {
+      const currentState = state.getState();
+
+      if (
+        currentState.isPlayerOne == true &&
+        currentState.currentGame.myPlay == ""
+      ) {
+        state.setMyMove("null");
+        console.log("soy null");
+      } else if (
+        currentState.isPlayerTwo == true &&
+        currentState.currentGame.computerPlay == ""
+      ) {
+        state.setRivalMove("null");
+        console.log("el rival es null");
+      }
+    });
   }
 
   render() {
@@ -22,18 +39,24 @@ class ResultsPage extends HTMLElement {
     const rivalMove = currentState.roomData.playerTwo.choice;
 
     //// SETEA LAS IMAGENES SEGUN SI GANA, PIERDE O EMPATA ////
+
     let res: string = state.whoWins(myMove, rivalMove);
 
     if (currentState.isPlayerOne == true && res == "win") {
       res = imageWin;
+      box.className = "win";
     } else if (currentState.isPlayerOne == true && res == "lose") {
       res = imageLose;
+      box.className = "lose";
     } else if (currentState.isPlayerTwo == true && res == "win") {
       res = imageLose;
+      box.className = "lose";
     } else if (currentState.isPlayerTwo == true && res == "lose") {
       res = imageWin;
+      box.className = "win";
     } else {
       res = imageTie;
+      box.className = "tie";
     }
 
     //// MUESTRA EL SCORE CON LOS PUNTOS Y BOTONES ////
@@ -151,7 +174,7 @@ class ResultsPage extends HTMLElement {
 
     //// COLOR DE FONDO SEGUN RESULTADO ////
 
-    let result = state.whoWins(myMove, rivalMove);
+    /*     let result = state.whoWins(myMove, rivalMove);
 
     if (currentState.isPlayerOne == true && result == "win") {
       result = "win";
@@ -165,22 +188,26 @@ class ResultsPage extends HTMLElement {
       result = "tie";
     }
 
-    box.className = result;
+    box.className = result;  */
+
+    state.setScore();
 
     //// BOTON VOLVER A JUGAR Y REINICIAR PUNTAJE ////
 
     const buttonElem: any = box.querySelector(".home");
     buttonElem.addEventListener("click", () => {
-      state.setMyStart();
-      state.setRivalStart();
-      Router.go("/connection");
+      if (currentState.isPlayerOne) {
+        Router.go("/instr");
+      } else if (currentState.isPlayerTwo) {
+        Router.go("/instructions");
+      }
     });
 
     const buttonReset: any = box.querySelector(".reset");
     buttonReset.addEventListener("click", () => {
-      (state.data.history.computer = 0), (state.data.history.me = 0);
+      state.restartPoints();
       Router.go("/welcome");
-      console.log("puntaje reiniciado");
+      console.log("puntaje reiniciado", localStorage);
     });
 
     shadow.appendChild(box);

@@ -8,7 +8,7 @@ class InstrPage extends HTMLElement {
     const currentState = state.getState();
     state.imThePlayerOne();
 
-    state.subscribe(() => {});
+    /* state.subscribe(() => {}); */
   }
 
   render() {
@@ -162,13 +162,16 @@ class InstrPage extends HTMLElement {
     const buttonElem: any = this.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
-      state.setMyStart();
+      state.setMyStart(() => {
+        Router.go("/connection");
+      });
       console.log("my start is true");
-      if (currentState.roomData.playerTwo.start == false) {
+
+      /*  if (currentState.roomData.playerTwo.start == false) {
         Router.go("/connection");
       } else {
         Router.go("/play");
-      }
+      } */
     });
 
     this.appendChild(style);

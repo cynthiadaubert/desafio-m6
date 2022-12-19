@@ -22,9 +22,9 @@ import { buttonComp } from "./components/button";
     state.setState(state.data);
   }); */
 
-  /* (.a) */ state.subscribe(() => {
-    /* console.log("soy el subscribe del index", state.getState().myUserId); */
-  });
+  /* (.a)  state.subscribe(() => {
+     console.log("soy el subscribe del index", state.getState().myUserId); 
+  });/*
   const root = document.querySelector(".root");
   /*   initRouter(root as Element); */
 

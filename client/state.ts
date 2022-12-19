@@ -1,3 +1,4 @@
+import { Router } from "@vaadin/router";
 type Jugada = "piedra" | "papel" | "tijera" | "null";
 
 const API_BASE_URL =
@@ -23,6 +24,7 @@ const state = {
     roomData: {},
     isPlayerOne: false,
     isPlayerTwo: false,
+    rtdbIsConnected: false,
 
     currentGame: {
       computerPlay: "",
@@ -35,7 +37,7 @@ const state = {
     },
   },
 
-  listeners: [] /* <___ escucha todos los cambios por fuera de la sala */,
+  listeners: [],
 
   initState() {
     const localData = localStorage.getItem("saved-data");
@@ -45,10 +47,6 @@ const state = {
     } else {
       this.setState(JSON.parse(localData));
     }
-    /*     const localData = localStorage.getItem("saved-data");
-    if (localData !== null) {
-      this.setState(JSON.parse(localData));
-    } */
   },
 
   getState() {
@@ -87,11 +85,11 @@ const state = {
           currentState.myUserId = data.id;
 
           this.setState(currentState);
-          callback(); /* -->cuando no hay error */
+          callback();
         });
     } else {
       console.error("No hay nombre en el state.data ");
-      callback(true); /* ---> cuando hay error */
+      callback(true);
     }
   },
 
@@ -112,11 +110,9 @@ const state = {
           console.log("soy la data del fetch SignUp RIVAL", data);
           currentState.rivalUserId = data.id;
           this.setState(currentState);
-          /* -->cuando no hay error */
         });
     } else {
       console.error("No hay nombre en el state.data ");
-      /* ---> cuando hay error */
     }
     if (callback) {
       callback();
@@ -189,7 +185,6 @@ const state = {
   },
 
   listenRoom(rtdbRoomId?: string) {
-    console.log("room id nuevo listen rooms", rtdbRoomId);
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId + "/current-game");
     rtdbRoomRef.on("value", (snap) => {
       const rtdbData = snap.val();
@@ -203,17 +198,21 @@ const state = {
       const rivalOnline = rtdbData.playerTwo.online;
       const myStart = rtdbData.playerOne.start;
       const rivalStart = rtdbData.playerTwo.start;
-      console.log("ROOM DATA:", rtdbData);
+      const myScore = rtdbData.playerOne.score;
+      const rivalScore = rtdbData.playerTwo.score;
+
       this.setState({
         ...currentState,
         myName,
         rivalName,
-        myPlay,
-        computerPlay,
         online,
         rivalOnline,
         myStart,
         rivalStart,
+        myPlay,
+        computerPlay,
+        myScore,
+        rivalScore,
       });
 
       const newRoomData = state.getState();
@@ -235,6 +234,7 @@ const state = {
           online: true,
           start: false,
           choice: "",
+          score: 0,
         },
       });
       currentState.online = true;
@@ -260,6 +260,7 @@ const state = {
           online: true,
           start: false,
           choice: "",
+          score: 0,
         },
       });
       currentState.rivalOnline = true;
@@ -282,6 +283,7 @@ const state = {
           id: currentState.myUserId,
           online: true,
           start: true,
+          score: 0,
         },
       });
       currentState.myStart = true;
@@ -304,6 +306,7 @@ const state = {
           id: currentState.rivalUserId,
           online: true,
           start: true,
+          score: 0,
         },
       });
       currentState.rivalStart = true;
@@ -319,66 +322,59 @@ const state = {
     const currentState = this.getState();
     currentState.isPlayerOne = true;
     this.setState(currentState);
+    console.log("is player 1");
   },
 
   imThePlayerTwo() {
     const currentState = this.getState();
     currentState.isPlayerTwo = true;
     this.setState(currentState);
+    console.log("is player 2");
   },
 
-  /*   listenStart(callback?) {
+  setRealtimeConnection(boolean) {
     const currentState = this.getState();
-    const { myName, rivalName } = currentState;
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
+    currentState.rtdbIsConnected = boolean;
+    this.setState(currentState);
+  },
+
+  listenConnectedPlayers() {
+    const currentState = this.getState();
+    const isConnected = currentState.rtdbIsConnected;
+    console.log("is connected", isConnected);
+    return isConnected;
+  },
+
+  getPlayersStart(rtdbRoomId?: string) {
+    const rtdbRoomRef = rtdb.ref("/rooms/" + rtdbRoomId + "/current-game");
     rtdbRoomRef.on("value", (snap) => {
-      const roomData = snap.val();
-      const { playerOne, playerTwo } = roomData;
-      // If there's no opponent name, get it and save the state
-      if (!rivalName && playerOne.name && playerTwo.name !== myName) {
-        // Player1 is the opponent
-        currentState.opponentName = playerOne.name;
-        this.setState(currentState);
-      } else if (!rivalName && playerTwo.name && playerTwo.name !== myName) {
-        // Player2 is the opponent
-        currentState.opponentName = playerTwo.name;
-        this.setState(currentState);
-      }
-      // When both players are ready, go to the Game Page
-      if (playerOne.ready && playerTwo.ready) {
-        // Disconnect the listener
-        rtdbRoomRef.off("value");
-        if (callback) {
-          callback();
-        }
+      const rtdbData = snap.val();
+      let p1Start = rtdbData.playerOne.start;
+      let p2Start = rtdbData.playerTwo.start;
+
+      if (
+        p1Start == true &&
+        p2Start == false &&
+        location.pathname == "/connection"
+      ) {
+        this.listenConnectedPlayers() == false
+          ? this.setRealtimeConnection(true)
+          : "";
+      } else if (
+        p1Start == true &&
+        p2Start == true &&
+        location.pathname == "/connection"
+      ) {
+        this.listenConnectedPlayers() == false
+          ? this.setRealtimeConnection(true)
+          : "";
+        console.log("conectadosssss");
+        Router.go("/play");
       }
     });
-  }, */
+  },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-
-  /*   setMoveState(move: Jugada) {
-    const currentState = this.getState();
-    currentState.move = move;
-    this.setState(currentState);
-  },
-
-  setMovetoRtdb(move: Jugada) {
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/moves"
-    );
-
-    rtdbRoomRef.update({
-      moves: [move],
-    });
-
-    this.setState(currentState);
-  }, */
-
-  //// SETEA MOVIMIENTOS DE LAS MANOS ////
 
   setMyMove(move: Jugada) {
     const currentState = this.getState();
@@ -394,11 +390,11 @@ const state = {
           online: true,
           start: true,
           choice: move,
+          score: 0,
         },
       });
       currentState.currentGame.myPlay = move;
     }
-    /*   this.pushToHistory(); */
     this.setState(currentState);
   },
   setRivalMove(move: Jugada) {
@@ -415,43 +411,13 @@ const state = {
           online: true,
           start: true,
           choice: move,
+          score: 0,
         },
       });
       currentState.currentGame.computerPlay = move;
     }
-    /* this.pushToHistory(); */
     this.setState(currentState);
   },
-
-  /*   listenPlayerMoves(move: Jugada) {
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
-    if (currentState.myName) {
-      rtdbRoomRef.update({
-        playerOne: {
-          name: currentState.myName,
-          id: currentState.myUserId,
-          start: false,
-          move: move,
-        },
-      });
-      currentState.currentGame.myPlay = move;
-    } else if (currentState.rivalName) {
-      rtdbRoomRef.update({
-        playerTwo: {
-          name: currentState.rivalName,
-          id: currentState.rivalUserId,
-          start: false,
-          move: move,
-        },
-      });
-      currentState.currentGame.computerPlay = move;
-    }
-    this.setState(currentState);
-    this.pushToHistory();
-  }, */
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
   whoWins(myPlay: Jugada, computerPlay: Jugada) {
@@ -478,44 +444,57 @@ const state = {
 
     let result;
 
-    if (win == true) {
+    if (win == true && location.pathname == "/results") {
       currentState.history.me++;
-      currentState.roomData.history.playerOne++;
       result = "win";
-    } else if (lose == true) {
+    } else if (lose == true && location.pathname == "/results") {
       currentState.history.computer++;
-      currentState.roomData.history.playerTwo++;
       result = "lose";
     } else {
       result = "tie";
-      currentState.roomData.history.playerOne += 0;
-      currentState.roomData.history.playerTwo += 0;
     }
 
+    currentState.currentGame.myPlay = myPlay;
+    currentState.currentGame.computerPlay = computerPlay;
     this.setState(currentState);
     return result;
+  },
 
-    /* 
-    const roomId = currentState.roomId;
-
-    fetch(API_BASE_URL + "/rooms/" + roomId, {
-      method: "post",
-      headers: {
-        "content-type": "application/json",
+  setScore() {
+    const cs = this.getState();
+    const p1Score = cs.history.me;
+    const p2Score = cs.history.computer;
+    console.log("p1 score y p2score", p1Score, p2Score);
+    const rtdbRoomRef = rtdb.ref("/rooms/" + cs.rtdbRoomId + "/current-game");
+    rtdbRoomRef.update({
+      history: {
+        playerOne: p1Score,
+        playerTwo: p2Score,
       },
-      body: JSON.stringify({ result }),
-    })
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {});
-    return result; */
+      playerOne: {
+        name: cs.myName,
+        id: cs.myUserId,
+        online: true,
+        start: true,
+        score: p1Score,
+      },
+      playerTwo: {
+        name: cs.rivalName,
+        id: cs.rivalUserId,
+        online: true,
+        start: true,
+        score: p2Score,
+      },
+    });
+
+    this.setState(cs);
+    console.log("current score", cs.roomData);
   },
 
   restartPoints() {
     const currentState = state.getState();
     const rtdbRoomRef = rtdb.ref(
-      "/rooms" + currentState.rtdbRoomId + "current-game"
+      "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
     if (currentState.myName) {
       rtdbRoomRef.update({
@@ -541,15 +520,7 @@ const state = {
     }
     currentState.currentGame.myPlay = "";
     currentState.currentGame.computerPlay = "";
-    this.setState(
-      currentState
-    ); /* <-- se tiene que guardar antes todo el , en el init para guardar todos los cambios todo el tiempo */
-
-    //// SETEA ESTE NUEVO ESTADO EN EL LOCALSTORAGE ////
-    /*   localStorage.setItem("saved-data", JSON.stringify(state.data));
-     */
-    //VER EL SUSCRIBE PARA CONECTAR LOS JUGADORES EN LOS COMPONENTES.
-    //PUSHEAR LAS MANOS ELEGIDAS A LA RTDB
+    this.setState(currentState);
   },
 
   setState(newState) {
@@ -557,11 +528,7 @@ const state = {
     for (const cb of this.listeners) {
       cb();
     }
-    localStorage.setItem(
-      "saved-data",
-      JSON.stringify(newState)
-    ); /* --->tenemos habilitada SIEMPRE la última versión */
-    console.log("Soy el state en setState, he cambiado:", this.data);
+    localStorage.setItem("saved-data", JSON.stringify(newState));
   },
 
   subscribe(callback: (any) => any) {

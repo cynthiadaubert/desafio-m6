@@ -4,10 +4,10 @@ import { state } from "../../state";
 class HandsPage extends HTMLElement {
   connectedCallback() {
     this.render();
-
-    const currentState = state.getState();
-    state.listenRoom(currentState.rtdbRoomId);
-    state.subscribe(() => {});
+    /* 
+    const currentState = state.getState(); */
+    /*   state.listenRoom(currentState.rtdbRoomId); 
+    state.subscribe(() => {});*/
   }
 
   render() {
@@ -177,7 +177,7 @@ class HandsPage extends HTMLElement {
 
     setTimeout(() => {
       Router.go("/results");
-    }, 3000);
+    }, 2000);
 
     shadow.appendChild(div);
     shadow.appendChild(style);

@@ -396,6 +396,7 @@ const state = {
       currentState.currentGame.myPlay = move;
     }
     this.setState(currentState);
+    console.log("my move", currentState.roomData.playerOne.choice);
   },
   setRivalMove(move: Jugada) {
     const currentState = this.getState();
@@ -417,10 +418,12 @@ const state = {
       currentState.currentGame.computerPlay = move;
     }
     this.setState(currentState);
+    console.log("rival move", currentState.roomData.playerTwo.choice);
   },
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
   whoWins(myPlay: Jugada, computerPlay: Jugada) {
+    console.log("who wins", myPlay, computerPlay);
     const currentState = this.getState();
 
     const ganeConTijeras =
@@ -456,7 +459,8 @@ const state = {
 
     currentState.currentGame.myPlay = myPlay;
     currentState.currentGame.computerPlay = computerPlay;
-    this.setState(currentState);
+    /* this.setState("STATE EN WHO WINS", currentState); */
+
     return result;
   },
 
@@ -476,6 +480,7 @@ const state = {
         id: cs.myUserId,
         online: true,
         start: true,
+        choice: cs.roomData.playerOne.choice,
         score: p1Score,
       },
       playerTwo: {
@@ -483,6 +488,7 @@ const state = {
         id: cs.rivalUserId,
         online: true,
         start: true,
+        choice: cs.roomData.playerTwo.choice,
         score: p2Score,
       },
     });

@@ -3,6 +3,15 @@ import { state } from "../../state";
 
 class HandsPage extends HTMLElement {
   connectedCallback() {
+    const currentState = state.getState();
+    const playerPlay = currentState.currentGame.myPlay;
+    const pcPlay = currentState.currentGame.computerPlay;
+    if (playerPlay == "") {
+      state.setMyMove("null");
+    }
+    if (pcPlay == "") {
+      state.setRivalMove("null");
+    }
     this.render();
     /* 
     const currentState = state.getState(); */
@@ -88,42 +97,42 @@ class HandsPage extends HTMLElement {
         
         `;
     }
-    if (playerPlay == undefined && pcPlay == "papel") {
+    if (playerPlay == "" && pcPlay == "papel") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
     }
-    if (playerPlay == undefined && pcPlay == "piedra") {
+    if (playerPlay == "" && pcPlay == "piedra") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
     }
-    if (playerPlay == undefined && pcPlay == "tijera") {
+    if (playerPlay == "" && pcPlay == "tijera") {
       div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
     }
-    if (playerPlay == "piedra" && pcPlay == undefined) {
+    if (playerPlay == "piedra" && pcPlay == "") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
     }
-    if (playerPlay == "papel" && pcPlay == undefined) {
+    if (playerPlay == "papel" && pcPlay == "") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
     }
-    if (playerPlay == "tijera" && pcPlay == undefined) {
+    if (playerPlay == "tijera" && pcPlay == "") {
       div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
@@ -175,9 +184,9 @@ class HandsPage extends HTMLElement {
 
     ////// PASAR A LA PÁGINA FINAL ///////
 
-    setTimeout(() => {
+    /*     setTimeout(() => {
       Router.go("/results");
-    }, 2000);
+    }, 5000); */
 
     shadow.appendChild(div);
     shadow.appendChild(style);

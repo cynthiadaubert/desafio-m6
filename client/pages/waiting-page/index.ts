@@ -3,7 +3,6 @@ import { state } from "../../state";
 
 class WaitingPage extends HTMLElement {
   connectedCallback() {
-    /*  state.listenRoom(state.data.rtdbRoomId); */
     const cs = state.getState();
     const rtdbRoomId = cs.rtdbRoomId;
 
@@ -13,20 +12,6 @@ class WaitingPage extends HTMLElement {
 
     state.subscribe(() => {
       this.render();
-
-      /*       if (
-        location.pathname == "/connection" &&
-        (roomData.playerOne.start == false || roomData.playerTwo.start == false)
-      ) {
-        console.error("falta un jugador");
-      } else if (
-        roomData.playerOne.start == true &&
-        roomData.playerTwo.start == true &&
-        location.pathname == "/connection"
-      ) {
-        console.log("PLAYERS CONNECTED");
-        this.render(); */
-      /*      Router.go("/play"); */
     });
     this.render();
   }

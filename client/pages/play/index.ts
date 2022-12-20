@@ -3,8 +3,9 @@ import { state } from "../../state";
 
 class PlayPage extends HTMLElement {
   connectedCallback() {
-    state.subscribe(() => {});
     this.render();
+    /*     state.subscribe(() => {});
+    this.render(); */
   }
 
   render() {
@@ -132,21 +133,40 @@ class PlayPage extends HTMLElement {
       countdownElem.innerHTML = `${counter}`;
       counter--;
       if (counter < 0) {
+        /* if (
+          currentState.isPlayerOne == true &&
+          currentState.currentGame.myPlay == ""
+        ) {
+          state.setMyMove("null");
+              state.setState(currentState); 
+          console.log("soy null");
+          Router.go("/instr");
+        } else if (
+          currentState.isPlayerTwo == true &&
+          currentState.currentGame.computerPlay == ""
+        ) {
+          state.setRivalMove("null");
+          /*    state.setState(currentState); 
+          console.log("rival es null");
+          Router.go("/instructions");
+        }*/
         clearInterval(intervalId);
-        Router.go("/results");
+        /* console.log(state.getState()); */
+        Router.go("/showhands");
       }
     }, 1000);
 
     ////// TIMEOUT PARA PASAR A LAS MANOS //////
 
-    const handsContainer: any = document.querySelector(".hands");
+    /*     const handsContainer: any = document.querySelector(".hands");
 
     handsContainer.addEventListener("click", () => {
+      console.log("cliqueaste mano");
       clearInterval(intervalId);
       setTimeout(() => {
         Router.go("/showhands");
       }, 1000);
-    });
+    }); */
 
     /* shadow.appendChild(div); */
     this.appendChild(style);

@@ -8,28 +8,14 @@ const imageTie = require("url:../../img/empate.png");
 class ResultsPage extends HTMLElement {
   connectedCallback() {
     this.render();
-
-    state.subscribe(() => {
-      const currentState = state.getState();
-
-      if (
-        currentState.isPlayerOne == true &&
-        currentState.currentGame.myPlay == ""
-      ) {
-        state.setMyMove("null");
-        console.log("soy null");
-      } else if (
-        currentState.isPlayerTwo == true &&
-        currentState.currentGame.computerPlay == ""
-      ) {
-        state.setRivalMove("null");
-        console.log("el rival es null");
-      }
-    });
+    const currentState = state.getState();
+    console.log("current en results", currentState);
+    state.listenRoom(currentState.rtdbRoomId);
+    state.subscribe(() => {});
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
+    /*  let shadow = this.attachShadow({ mode: "open" }); */
     const box = document.createElement("div");
     const style = document.createElement("style");
 
@@ -210,8 +196,8 @@ class ResultsPage extends HTMLElement {
       console.log("puntaje reiniciado", localStorage);
     });
 
-    shadow.appendChild(box);
-    shadow.appendChild(style);
+    this.appendChild(box);
+    this.appendChild(style);
   }
 }
 customElements.define("results-page", ResultsPage);

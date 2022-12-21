@@ -6,12 +6,12 @@ class HandsPage extends HTMLElement {
     const currentState = state.getState();
     const playerPlay = currentState.currentGame.myPlay;
     const pcPlay = currentState.currentGame.computerPlay;
-    if (playerPlay == "") {
+    /*     if (playerPlay == "") {
       state.setMyMove("null");
     }
     if (pcPlay == "") {
       state.setRivalMove("null");
-    }
+    } */
     this.render();
     /* 
     const currentState = state.getState(); */

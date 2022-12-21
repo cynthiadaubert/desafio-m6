@@ -122,19 +122,31 @@ app.get("/rooms/:roomId", (req, res) => {
       }
     });
 });
-/* 
-Devuelve un arreglo con los datos de los usuarios existentes.
-app.get("/users", (req, res) => {
-  playerCollection.get().then((playersData) => {
-    const docs = playersData.docs;
-    const players = docs.map((doc) => {
-      return doc.data();
-    });
-    res.status(200).send({
-      ...players,
+
+// ACTUALIZA LAS MANOS ELEGIDAS DEL P1
+app.patch("/rooms/:rtdbRoomId/playerOne/choice", (req, res) => {
+  const rtdbRoomId = req.params.rtdbRoomId;
+  const userChoice = req.body.userChoice;
+
+  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/playerOne/`);
+  roomRef.update({ choice: `${userChoice}` }).then((data) => {
+    res.status(202).send({
+      message: `El player eligió: ${userChoice}`,
     });
   });
-}); */
+});
+// ACTUALIZA LAS MANOS ELEGIDAS DEL P2
+app.patch("/rooms/:rtdbRoomId/playerTwo/choice", (req, res) => {
+  const rtdbRoomId = req.params.rtdbRoomId;
+  const userChoice = req.body.userChoice;
+
+  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/playerTwo`);
+  roomRef.update({ choice: `${userChoice}` }).then((data) => {
+    res.status(202).send({
+      message: `El player eligió: ${userChoice}`,
+    });
+  });
+});
 
 // ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
 /* app.post("/rooms/:roomId", (req, res) => {

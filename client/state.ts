@@ -168,7 +168,7 @@ const state = {
       });
   },
 
-  playerChoices(rtdbRoomId?: string) {
+  /*   playerChoices(rtdbRoomId?: string) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
     rtdbRoomRef.get().then((snap) => {
@@ -182,7 +182,7 @@ const state = {
       }
       this.setState(currentState);
     });
-  },
+  }, */
 
   listenRoom(rtdbRoomId?: string) {
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId + "/current-game");
@@ -375,15 +375,69 @@ const state = {
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-
   setMyMove(move: Jugada) {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+
+    fetch(
+      API_BASE_URL +
+        "/rooms/" +
+        rtdbRoomId +
+        "/current-game" +
+        "/playerOne/choice",
+      {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ move }),
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("FETCH MOVE PLAYER 1", data);
+        currentState.currentGame.myPlay = data;
+        this.setState(currentState);
+      });
+  },
+  setRivalMove(move: Jugada) {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+
+    fetch(
+      API_BASE_URL +
+        "/rooms/" +
+        rtdbRoomId +
+        "/current-game" +
+        "/playerTwo/choice",
+      {
+        method: "PATCH",
+        headers: {
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({ move }),
+      }
+    )
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("FETCH MOVE RIVAL", data);
+        currentState.currentGame.computerPlay = data;
+        this.setState(currentState);
+      });
+  },
+
+  /* setMyMove(move: Jugada) {
     const currentState = this.getState();
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
 
     if (currentState.myName) {
-      rtdbRoomRef.update({
+      const res = rtdbRoomRef.update({
         playerOne: {
           name: currentState.myName,
           id: currentState.myUserId,
@@ -393,7 +447,10 @@ const state = {
           score: 0,
         },
       });
-      currentState.currentGame.myPlay = move;
+      res.then((data) => {
+        console.log("data", data);
+      });
+          currentState.currentGame.myPlay = move; 
     }
     this.setState(currentState);
     console.log("my move", currentState.roomData.playerOne.choice);
@@ -419,7 +476,7 @@ const state = {
     }
     this.setState(currentState);
     console.log("rival move", currentState.roomData.playerTwo.choice);
-  },
+  },*/
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
   whoWins(myPlay: Jugada, computerPlay: Jugada) {

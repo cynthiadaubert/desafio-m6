@@ -152,7 +152,7 @@ class PlayPage extends HTMLElement {
         }*/
         clearInterval(intervalId);
 
-        /*  Router.go("/showhands"); */
+        Router.go("/showhands");
       }
     }, 1000);
 

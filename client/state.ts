@@ -167,6 +167,18 @@ const state = {
         }
       });
   },
+  getPlayerChoices() {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+
+    fetch(API_BASE_URL + "/rooms/" + rtdbRoomId + "/current-game")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        console.log("soy la data del fetch getplayers", data);
+      });
+  },
 
   /*   playerChoices(rtdbRoomId?: string) {
     const currentState = this.getState();
@@ -375,10 +387,9 @@ const state = {
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
-  setMyMove(move: Jugada) {
+  setMyMove(choice: Jugada) {
     const currentState = this.getState();
     const rtdbRoomId = currentState.rtdbRoomId;
-
     fetch(
       API_BASE_URL +
         "/rooms/" +
@@ -390,25 +401,25 @@ const state = {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ move }),
+        body: JSON.stringify({ choice }),
       }
     )
       .then((res) => {
         return res.json();
       })
       .then((data) => {
-        currentState.currentGame.myPlay = data.move;
+        currentState.currentGame.myPlay = data.choice;
         console.log("current", currentState);
-        console.log("FETCH MOVE PLAYER 1", data.move);
+        console.log("FETCH MOVE PLAYER 1", data.choice);
       });
 
     this.setState(currentState);
     console.log(currentState.currentGame.myPlay);
   },
-  setRivalMove(move: Jugada) {
+
+  setRivalMove(choice: Jugada) {
     const currentState = this.getState();
     const rtdbRoomId = currentState.rtdbRoomId;
-
     fetch(
       API_BASE_URL +
         "/rooms/" +
@@ -420,66 +431,20 @@ const state = {
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify({ move }),
+        body: JSON.stringify({ choice }),
       }
     )
       .then((res) => {
         return res.json();
       })
       .then((data) => {
-        console.log("FETCH MOVE RIVAL", data);
-        /*         currentState.currentGame.computerPlay = data;
-        this.setState(currentState); */
+        currentState.currentGame.computerPlay = data.choice;
+        console.log("current, rival", currentState);
+        console.log("FETCH MOVE RIVAL", data.choice);
       });
-  },
-
-  /* setMyMove(move: Jugada) {
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
-
-    if (currentState.myName) {
-      const res = rtdbRoomRef.update({
-        playerOne: {
-          name: currentState.myName,
-          id: currentState.myUserId,
-          online: true,
-          start: true,
-          choice: move,
-          score: 0,
-        },
-      });
-      res.then((data) => {
-        console.log("data", data);
-      });
-          currentState.currentGame.myPlay = move; 
-    }
     this.setState(currentState);
-    console.log("my move", currentState.roomData.playerOne.choice);
+    console.log(currentState.currentGame.computerPlay);
   },
-  setRivalMove(move: Jugada) {
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref(
-      "/rooms/" + currentState.rtdbRoomId + "/current-game"
-    );
-
-    if (currentState.rivalName) {
-      rtdbRoomRef.update({
-        playerTwo: {
-          name: currentState.rivalName,
-          id: currentState.rivalUserId,
-          online: true,
-          start: true,
-          choice: move,
-          score: 0,
-        },
-      });
-      currentState.currentGame.computerPlay = move;
-    }
-    this.setState(currentState);
-    console.log("rival move", currentState.roomData.playerTwo.choice);
-  },*/
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
   whoWins(myPlay: Jugada, computerPlay: Jugada) {

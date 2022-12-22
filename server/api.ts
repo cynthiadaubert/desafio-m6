@@ -126,62 +126,49 @@ app.get("/rooms/:roomId", (req, res) => {
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P1
 app.patch("/rooms/:rtdbRoomId/current-game/playerOne/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
-  const move = req.body.move;
+  const choice = req.body.choice;
 
-  const roomRef = rtdb.ref(
-    `/rooms/${rtdbRoomId}/current-game/playerOne/choice`
-  );
-  roomRef.update({ move }).then((data) => {
+  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game/playerOne`);
+  roomRef.update({ choice }).then((data) => {
     res.status(202).json({
-      move,
+      choice,
     });
   });
 });
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P2
 app.patch("/rooms/:rtdbRoomId/current-game/playerTwo/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
-  const userChoice = req.body.userChoice;
+  const choice = req.body.choice;
 
   const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game/playerTwo`);
-  roomRef.update({ choice: `${userChoice}` }).then((data) => {
+  roomRef.update({ choice }).then((data) => {
+    res.status(202).json({
+      choice,
+    });
+  });
+});
+/*   const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game/playerTwo`);
+  roomRef.update({ move }).then((data) => {
     res.status(202).send({
       message: `El player eligió: ${userChoice}`,
     });
   });
+}); */
+
+// DEVUELVE LOS MOVIMIENTOS DE LOS JUGADORES
+app.get("/rooms/:rtdbRoomId/current-game", (req, res) => {
+  const rtdbRoomId = req.params.rtdbRoomId;
+  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game`);
+
+  roomRef.get().then((snap) => {
+    if (snap.exists) {
+      const snapData = snap.val();
+      const snapDataEntries = Object.entries(snapData);
+
+      return res.json(snapDataEntries);
+    }
+  });
 });
-
-// ACTUALIZA EL PUNTAJE DE LOS JUGADORES EN LA DB
-/* app.post("/rooms/:roomId", (req, res) => {
-  const { roomId } = req.params;
-  const { result } = req.body;
-
-  playroomCollection
-    .doc(roomId.toString())
-    .get()
-    .then((room) => {
-      if (room.exists) {
-        const roomData = room.data();
-
-        if (result == "win") {
-          roomData.history.playerOne += 1;
-        }
-        if (result == "lose") {
-          roomData.history.playerTwo += 1;
-        }
-        if (result == "tie") {
-          (roomData.history.playerOne += 0), (roomData.history.playerTwo += 0);
-        }
-        playroomCollection.doc(roomId.toString()).update(roomData);
-        res.json(roomData);
-      } else {
-        res.status(401).json({
-          message: "La room n0o existe",
-        });
-      }
-    }); 
-
-
-});*/
 
 // Ejecutar express static y escuchar el puerto //
 

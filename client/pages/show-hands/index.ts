@@ -4,19 +4,20 @@ import { state } from "../../state";
 class HandsPage extends HTMLElement {
   connectedCallback() {
     const currentState = state.getState();
-    const playerPlay = currentState.currentGame.myPlay;
-    const pcPlay = currentState.currentGame.computerPlay;
-    /*     if (playerPlay == "") {
+    state.listenRoom(currentState.rtdbRoomId);
+
+    console.log("current en showhands", currentState);
+    const p1 = currentState.roomData.playerOne.choice;
+    const p2 = currentState.roomData.playerTwo.choice;
+    if (p1 == undefined) {
       state.setMyMove("null");
     }
-    if (pcPlay == "") {
+    if (p2 == undefined) {
       state.setRivalMove("null");
-    } */
+    } /* else if (p1 && p2 == undefined) {
+       Router.go("/results"); 
+    }*/
     this.render();
-    /* 
-    const currentState = state.getState(); */
-    /*   state.listenRoom(currentState.rtdbRoomId); 
-    state.subscribe(() => {});*/
   }
 
   render() {
@@ -31,6 +32,7 @@ class HandsPage extends HTMLElement {
     const currentState = state.getState();
     const playerPlay = currentState.roomData.playerOne.choice;
     const pcPlay = currentState.roomData.playerTwo.choice;
+    console.log("players showhands", playerPlay, pcPlay);
 
     ////// COMPROBAR MOVIMIENTOS PARA MOSTRAR MANOS //////
 
@@ -97,47 +99,53 @@ class HandsPage extends HTMLElement {
         
         `;
     }
-    if (playerPlay == "" && pcPlay == "papel") {
+    if (playerPlay == "null" && pcPlay == "papel") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
     }
-    if (playerPlay == "" && pcPlay == "piedra") {
+    if (playerPlay == "null" && pcPlay == "piedra") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
     }
-    if (playerPlay == "" && pcPlay == "tijera") {
+    if (playerPlay == "null" && pcPlay == "tijera") {
       div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
     }
-    if (playerPlay == "piedra" && pcPlay == "") {
+    if (playerPlay == "piedra" && pcPlay == "null") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePiedraURL}>
         <img class="player-hand" src=${imagePiedraURL}>
         
         `;
     }
-    if (playerPlay == "papel" && pcPlay == "") {
+    if (playerPlay == "papel" && pcPlay == "null") {
       div.innerHTML = `
         <img class="computer-hand" src=${imagePapelURL}>
         <img class="player-hand" src=${imagePapelURL}>
         
         `;
     }
-    if (playerPlay == "tijera" && pcPlay == "") {
+    if (playerPlay == "tijera" && pcPlay == "null") {
       div.innerHTML = `
         <img class="computer-hand" src=${imageTijeraURL}>
         <img class="player-hand" src=${imageTijeraURL}>
         
         `;
+    }
+    if (playerPlay == "null" && pcPlay == "null") {
+      div.innerHTML = `
+      <h1>?</h1>
+      <h1>?</h1>
+      `;
     }
 
     ///////// ESTILOS /////////////

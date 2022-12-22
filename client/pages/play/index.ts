@@ -151,8 +151,8 @@ class PlayPage extends HTMLElement {
           Router.go("/instructions");
         }*/
         clearInterval(intervalId);
-        /* console.log(state.getState()); */
-        Router.go("/showhands");
+
+        /*  Router.go("/showhands"); */
       }
     }, 1000);
 

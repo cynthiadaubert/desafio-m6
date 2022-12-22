@@ -124,23 +124,25 @@ app.get("/rooms/:roomId", (req, res) => {
 });
 
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P1
-app.patch("/rooms/:rtdbRoomId/playerOne/choice", (req, res) => {
+app.patch("/rooms/:rtdbRoomId/current-game/playerOne/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
-  const userChoice = req.body.userChoice;
+  const move = req.body.move;
 
-  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/playerOne/`);
-  roomRef.update({ choice: `${userChoice}` }).then((data) => {
-    res.status(202).send({
-      message: `El player eligió: ${userChoice}`,
+  const roomRef = rtdb.ref(
+    `/rooms/${rtdbRoomId}/current-game/playerOne/choice`
+  );
+  roomRef.update({ move }).then((data) => {
+    res.status(202).json({
+      move,
     });
   });
 });
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P2
-app.patch("/rooms/:rtdbRoomId/playerTwo/choice", (req, res) => {
+app.patch("/rooms/:rtdbRoomId/current-game/playerTwo/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
   const userChoice = req.body.userChoice;
 
-  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/playerTwo`);
+  const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game/playerTwo`);
   roomRef.update({ choice: `${userChoice}` }).then((data) => {
     res.status(202).send({
       message: `El player eligió: ${userChoice}`,

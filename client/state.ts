@@ -397,10 +397,13 @@ const state = {
         return res.json();
       })
       .then((data) => {
-        console.log("FETCH MOVE PLAYER 1", data);
-        currentState.currentGame.myPlay = data;
-        this.setState(currentState);
+        currentState.currentGame.myPlay = data.move;
+        console.log("current", currentState);
+        console.log("FETCH MOVE PLAYER 1", data.move);
       });
+
+    this.setState(currentState);
+    console.log(currentState.currentGame.myPlay);
   },
   setRivalMove(move: Jugada) {
     const currentState = this.getState();
@@ -425,8 +428,8 @@ const state = {
       })
       .then((data) => {
         console.log("FETCH MOVE RIVAL", data);
-        currentState.currentGame.computerPlay = data;
-        this.setState(currentState);
+        /*         currentState.currentGame.computerPlay = data;
+        this.setState(currentState); */
       });
   },
 

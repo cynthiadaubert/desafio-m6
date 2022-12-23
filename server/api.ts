@@ -163,9 +163,14 @@ app.get("/rooms/:rtdbRoomId/current-game", (req, res) => {
   roomRef.get().then((snap) => {
     if (snap.exists) {
       const snapData = snap.val();
-      const snapDataEntries = Object.entries(snapData);
+      const snapDataEntries = Object.values(snapData);
+      const p1 = snapDataEntries[1];
+      const p2 = snapDataEntries[2];
 
-      return res.json(snapDataEntries);
+      return res.json({
+        p1,
+        p2,
+      });
     }
   });
 });

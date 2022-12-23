@@ -133,32 +133,54 @@ class PlayPage extends HTMLElement {
       countdownElem.innerHTML = `${counter}`;
       counter--;
       if (counter < 0) {
-        /* if (
-          currentState.isPlayerOne == true &&
-          currentState.currentGame.myPlay == ""
-        ) {
-          state.setMyMove("null");
-              state.setState(currentState); 
-          console.log("soy null");
-          Router.go("/instr");
-        } else if (
-          currentState.isPlayerTwo == true &&
-          currentState.currentGame.computerPlay == ""
-        ) {
-          state.setRivalMove("null");
-          /*    state.setState(currentState); 
-          console.log("rival es null");
-          Router.go("/instructions");
-        }*/
         clearInterval(intervalId);
-
-        Router.go("/showhands");
+        state.getPlayerChoices(async () => {
+          try {
+            await console.log("?");
+          } catch (err) {
+            console.log(err);
+          }
+        });
+        /* Router.go("/showhands"); */
       }
     }, 1000);
 
-    ////// TIMEOUT PARA PASAR A LAS MANOS //////
+    /* shadow.appendChild(div); */
+    this.appendChild(style);
+  }
+}
+customElements.define("play-page", PlayPage);
 
-    /*     const handsContainer: any = document.querySelector(".hands");
+/*const intervalId = setInterval(() => {
+  countdownElem.innerHTML = `${counter}`;
+  counter--;
+  if (counter < 0) {
+     if (
+      currentState.isPlayerOne == true &&
+      currentState.currentGame.myPlay == ""
+    ) {
+      state.setMyMove("null");
+          state.setState(currentState); 
+      console.log("soy null");
+      Router.go("/instr");
+    } else if (
+      currentState.isPlayerTwo == true &&
+      currentState.currentGame.computerPlay == ""
+    ) {
+      state.setRivalMove("null");
+      /*    state.setState(currentState); 
+      console.log("rival es null");
+      Router.go("/instructions");
+    }
+    clearInterval(intervalId);
+
+    Router.go("/showhands");
+  }
+}, 1000);*/
+
+////// TIMEOUT PARA PASAR A LAS MANOS //////
+
+/*     const handsContainer: any = document.querySelector(".hands");
 
     handsContainer.addEventListener("click", () => {
       console.log("cliqueaste mano");
@@ -167,9 +189,3 @@ class PlayPage extends HTMLElement {
         Router.go("/showhands");
       }, 1000);
     }); */
-
-    /* shadow.appendChild(div); */
-    this.appendChild(style);
-  }
-}
-customElements.define("play-page", PlayPage);

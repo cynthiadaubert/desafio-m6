@@ -167,34 +167,6 @@ const state = {
         }
       });
   },
-  getPlayerChoices() {
-    const currentState = this.getState();
-    const rtdbRoomId = currentState.rtdbRoomId;
-
-    fetch(API_BASE_URL + "/rooms/" + rtdbRoomId + "/current-game")
-      .then((res) => {
-        return res.json();
-      })
-      .then((data) => {
-        console.log("soy la data del fetch getplayers", data);
-      });
-  },
-
-  /*   playerChoices(rtdbRoomId?: string) {
-    const currentState = this.getState();
-    const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId);
-    rtdbRoomRef.get().then((snap) => {
-      const rtdbData = snap.val();
-      const myChoice = rtdbData["current-game"].playerOne.start;
-      const rivalChoice = rtdbData["current-game"].playerTwo.start;
-      console.log("RTDB COMPLETA", myChoice, rivalChoice);
-
-      if (currentState.myUserId == rtdbData.ownerId) {
-        currentState.owner = currentState.myName;
-      }
-      this.setState(currentState);
-    });
-  }, */
 
   listenRoom(rtdbRoomId?: string) {
     const rtdbRoomRef = rtdb.ref("rooms/" + rtdbRoomId + "/current-game");
@@ -444,6 +416,32 @@ const state = {
       });
     this.setState(currentState);
     console.log(currentState.currentGame.computerPlay);
+  },
+
+  getPlayerChoices(callback?) {
+    const currentState = this.getState();
+    const rtdbRoomId = currentState.rtdbRoomId;
+
+    fetch(API_BASE_URL + "/rooms/" + rtdbRoomId + "/current-game")
+      .then((res) => {
+        return res.json();
+      })
+      .then((data) => {
+        const p1 = data["p1"].choice;
+        const p2 = data["p2"].choice;
+        currentState.currentGame.myPlay == p1;
+        currentState.currentGame.computerPlay == p2;
+        state.setState(currentState);
+        console.log(
+          "soy la data del fetch getplayers",
+          data["p1"].choice,
+          data["p2"].choice,
+          currentState.currentGame
+        );
+      });
+    if (callback) {
+      callback();
+    }
   },
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////

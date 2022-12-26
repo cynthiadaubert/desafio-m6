@@ -6,7 +6,6 @@ class HandsPage extends HTMLElement {
     const currentState = state.getState();
     state.listenRoom(currentState.rtdbRoomId);
 
-    console.log("current en showhands", currentState);
     const p1 = currentState.roomData.playerOne.choice;
     const p2 = currentState.roomData.playerTwo.choice;
     if (p1 == undefined) {
@@ -192,9 +191,9 @@ class HandsPage extends HTMLElement {
 
     ////// PASAR A LA PÁGINA FINAL ///////
 
-    /*     setTimeout(() => {
+    setTimeout(() => {
       Router.go("/results");
-    }, 5000); */
+    }, 5000);
 
     shadow.appendChild(div);
     shadow.appendChild(style);

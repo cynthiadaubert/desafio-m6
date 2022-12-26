@@ -141,7 +141,7 @@ class PlayPage extends HTMLElement {
             console.log(err);
           }
         });
-        /* Router.go("/showhands"); */
+        Router.go("/showhands");
       }
     }, 1000);
 

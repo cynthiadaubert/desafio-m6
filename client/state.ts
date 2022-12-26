@@ -434,9 +434,13 @@ const state = {
         state.setState(currentState);
         console.log(
           "soy la data del fetch getplayers",
-          data["p1"].choice,
+          "player 1",
+          p1,
+          "player 2",
+          p2
+          /*           data["p1"].choice,
           data["p2"].choice,
-          currentState.currentGame
+          currentState.currentGame */
         );
       });
     if (callback) {

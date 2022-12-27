@@ -39,9 +39,9 @@ class ErrorPage extends HTMLElement {
   .box {
     display: flex;
     flex-direction: column;
+    align-items: center;
     height: 100vh;
     width: 375px;
-    padding: 0px 35px 0px 35px;
   }
 
   @media (min-width: 769px) {
@@ -57,7 +57,7 @@ class ErrorPage extends HTMLElement {
   }
 
  .title {
-    font-size: 62px;
+    font-size: 80px;
     font-family: courier new;
     text-align: center;
     width: 284px;
@@ -77,8 +77,16 @@ class ErrorPage extends HTMLElement {
     }
   }
 
-  .hands{
-    margin-top: 38px;
+  .hands {
+    margin-top: 30px;
+  }
+
+  @media (min-width: 769px) {
+    .hands {
+      position:fixed;
+      bottom:0px;
+      margin-top: 0px;
+    }
   }
   
   .text {

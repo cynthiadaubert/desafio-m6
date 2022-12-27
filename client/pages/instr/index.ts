@@ -158,6 +158,18 @@ class InstrPage extends HTMLElement {
     }
   }
 
+  .hand {
+    margin-top: 20px;
+    position:fixed;
+    bottom:0px;
+  }
+
+  @media (min-width: 769px) {
+    .hand {
+    margin-top: 30px;
+  }
+}
+
 `;
     const buttonElem: any = this.querySelector("button-comp");
 

@@ -135,8 +135,13 @@ class PlayPage extends HTMLElement {
       if (counter < 0) {
         clearInterval(intervalId);
         state.getPlayerChoices(async () => {
+          const p1 = currentState.roomData.playerOne.choice;
+          const p2 = currentState.roomData.playerTwo.choice;
           try {
             await console.log("?");
+            if (p1 && p2 == undefined) {
+              Router.go("/results");
+            }
           } catch (err) {
             console.log(err);
           }

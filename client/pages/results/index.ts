@@ -61,7 +61,10 @@ class ResultsPage extends HTMLElement {
     </div>    
   `;
 
+    box.style.height = "max-content";
+
     //// ESTILOS ////
+
     style.innerHTML = `
 
   .root {
@@ -69,7 +72,7 @@ class ResultsPage extends HTMLElement {
     font-family: odibee sans;
     margin: 0 auto;
     height: 100%;
-    padding: 35px 0px 35px 0px;
+    
   }
 
   .star {

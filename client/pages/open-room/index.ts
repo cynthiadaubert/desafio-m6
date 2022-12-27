@@ -128,6 +128,11 @@ class OpenRoomPage extends HTMLElement {
           height: 87px;
         }
       }
+
+      .submit{
+        display: flex;
+        flex-direction: column;
+      }
     
     `;
     //////// IR A LA SIGUIENTE PÁGINA /////////

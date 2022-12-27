@@ -81,14 +81,17 @@ const state = {
           return res.json();
         })
         .then((data) => {
-          console.log("soy la data del fetch SignUp", data);
-          currentState.myUserId = data.id;
-
-          this.setState(currentState);
-          callback();
+          if (data.message) {
+            alert("Usuario ya registrado");
+            return;
+          } else {
+            console.log("soy la data del fetch SignUp", data);
+            currentState.myUserId = data.id;
+            this.setState(currentState);
+            callback();
+          }
         });
     } else {
-      console.error("No hay nombre en el state.data ");
       callback(true);
     }
   },
@@ -107,12 +110,15 @@ const state = {
           return res.json();
         })
         .then((data) => {
-          console.log("soy la data del fetch SignUp RIVAL", data);
-          currentState.rivalUserId = data.id;
-          this.setState(currentState);
+          if (data.message) {
+            alert("Usuario ya registrado");
+            return;
+          } else {
+            console.log("soy la data del fetch SignUp RIVAL", data);
+            currentState.rivalUserId = data.id;
+            this.setState(currentState);
+          }
         });
-    } else {
-      console.error("No hay nombre en el state.data ");
     }
     if (callback) {
       callback();
@@ -156,14 +162,19 @@ const state = {
         return res.json();
       })
       .then((data) => {
-        console.log("soy la data del fetch accessExistentRoom", data);
-        currentState.rtdbRoomId = data.rtdbRoomId;
-        this.setRtdbMyValues();
-        this.setRtdbRivalValues();
-        this.listenRoom(data.rtdbRoomId);
-        this.setState(currentState);
-        if (callback) {
-          callback();
+        if (data.message) {
+          alert("El id de la room no es correcto o no existe");
+          return;
+        } else {
+          console.log("soy la data del fetch accessExistentRoom", data);
+          currentState.rtdbRoomId = data.rtdbRoomId;
+          this.setRtdbMyValues();
+          this.setRtdbRivalValues();
+          this.listenRoom(data.rtdbRoomId);
+          this.setState(currentState);
+          if (callback) {
+            callback();
+          }
         }
       });
   },

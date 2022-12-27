@@ -13,9 +13,7 @@ class HandsPage extends HTMLElement {
     }
     if (p2 == undefined) {
       state.setRivalMove("null");
-    } /* else if (p1 && p2 == undefined) {
-       Router.go("/results"); 
-    }*/
+    }
     this.render();
   }
 
@@ -140,12 +138,12 @@ class HandsPage extends HTMLElement {
         
         `;
     }
-    if (playerPlay == "null" && pcPlay == "null") {
+    /*     if (playerPlay == "null" && pcPlay == "null") {
       div.innerHTML = `
       <h1>?</h1>
       <h1>?</h1>
       `;
-    }
+    } */
 
     ///////// ESTILOS /////////////
 
@@ -193,7 +191,7 @@ class HandsPage extends HTMLElement {
 
     setTimeout(() => {
       Router.go("/results");
-    }, 5000);
+    }, 4000);
 
     shadow.appendChild(div);
     shadow.appendChild(style);

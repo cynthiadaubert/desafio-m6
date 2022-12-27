@@ -102,7 +102,6 @@ class NewGamePage extends HTMLElement {
   }
 
   .button {
-    
     background-color: #006CFC;
     font-size: 45px;
     border: 10px solid #001997;
@@ -111,18 +110,33 @@ class NewGamePage extends HTMLElement {
     height: 87px;
     font-family: Odibee sans;
     color: #D8FCFC;
-    margin-top: 20px;
+    margin-top: 30px;
     }
 
     @media (min-width: 769px){
       .button {
-        margin-top: 0px;
+        margin-top: 15px;
         margin-bottom: 20px;
         width: 336px;
         height: 87px;
       }
     }
+
+    .submit{
+      display: flex;
+      flex-direction: column;
+    }
   
+    .hands{
+      margin-top: 32px;
+    }
+  
+    @media (min-width: 769px){
+      .hands {
+        margin-top: 0px;
+      }
+    }
+
   `;
 
     //////// IR A LA SIGUIENTE PÁGINA /////////

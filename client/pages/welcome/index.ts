@@ -6,18 +6,15 @@ class WelcomePage extends HTMLElement {
   }
 
   render() {
-    let shadow = this.attachShadow({ mode: "open" });
-    const div = document.createElement("div");
-    div.className = "box";
-
-    div.innerHTML = `
- 
-      <h1 class="title">Piedra papel o tijera</h1>
+    this.innerHTML = `
+    <div class="box">
+        <h1 class="title">Piedra papel o tijera</h1>
     
-      <button-comp class="button">Nuevo juego</button-comp>
-      <button-comp class="button-room">Ingresar a una sala</button-comp>
+        <button-comp class="button">Nuevo juego</button-comp>
+        <button-comp class="button-room">Ingresar a una sala</button-comp>
   
-      <hands-comp class="hand"></hands-comp>
+        <hands-comp class="hand"></hands-comp>
+    </div>
    
       `;
 
@@ -29,21 +26,23 @@ class WelcomePage extends HTMLElement {
     body {
     box-sizing: border-box;
     margin: 0 auto;
-  
+    height: fit-content;
     }
 
     .root {
       display: flex;
       flex-direction: column;
       align-items: center;
+      height: fit-content;
     }
   
     .box {
       display: flex;
       flex-direction: column;
-      height: 100vh;
+      height: max-content;
       width: 375px;
       padding: 0px 35px 0px 35px;
+      margin: 0 auto;
     }
 
     @media (min-width: 769px) {
@@ -51,7 +50,7 @@ class WelcomePage extends HTMLElement {
         display: flex;
         flex-direction: column;
         align-items: center;
-        height: 100%;
+        height: max-content;
         max-width: 336px;
         margin: 0 auto;
         padding: 0px;
@@ -59,7 +58,7 @@ class WelcomePage extends HTMLElement {
     }
 
     .title {
-      font-size: 62px;
+      font-size: 80px;
       font-family: courier new;
       text-align: center;
       width: 284px;
@@ -79,28 +78,29 @@ class WelcomePage extends HTMLElement {
       }
     }
 
-    .hands{
-      margin-top: 38px;
+    .hand {
+      margin-top: 42px;
+      mergin-bottom: 0;
+      padding: 0;
     }
 
     `;
 
     //////// IR A LA SIGUIENTE PÁGINA /////////
 
-    const buttonElem: any = div.querySelector("button-comp");
+    const buttonElem: any = document.querySelector("button-comp");
 
     buttonElem.addEventListener("click", () => {
       Router.go("/newgame");
     });
 
-    const buttonRoom: any = div.querySelector(".button-room");
+    const buttonRoom: any = document.querySelector(".button-room");
 
     buttonRoom.addEventListener("click", () => {
       Router.go("/openroom");
     });
 
-    shadow.appendChild(div);
-    shadow.appendChild(style);
+    this.appendChild(style);
   }
 }
 customElements.define("welcome-page", WelcomePage);

@@ -4,10 +4,6 @@ import { state } from "../../state";
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
     this.render();
-    /*     const currentState = state.getState();
-    console.log(currentState); */
-
-    /* state.subscribe(() => {}); */
   }
 
   render() {
@@ -172,31 +168,6 @@ class OpenRoomPage extends HTMLElement {
         console.log("el código no coincide con el state");
         Router.go("/error");
       }
-
-      /*       state.accessExistentRoom(() => {
-        state.subscribe(() => {
-          if (cs.roomData[1].name && location.pathname == "/openroom") {
-            Router.go("/error");
-          } else if (!cs.roomData[1].name && location.pathname == "/openroom") {
-            state.subscribe(() => {
-              if (
-                cs.roomData[0].online == false ||
-                cs.roomData[1].online == false
-              ) {
-                console.error("falta un jugador");
-              }
-              if (
-                cs.roomData[0].online == true &&
-                cs.roomData[1].online == true &&
-                window.location.pathname == "/openroom"
-              ) {
-                Router.go("/instructions");
-                console.log("rival name ahora:", cs.rivalName);
-              }
-            });
-          }
-        });
-      }); */
     });
 
     this.appendChild(style);

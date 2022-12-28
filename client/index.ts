@@ -14,63 +14,19 @@ import { state } from "./state";
 import { handsComp } from "./components/hands";
 import { buttonComp } from "./components/button";
 
+async function beforeunloadUpdate() {
+  state.setRealtimeConnection(false);
+  state.restartValues();
+  state.setState(state.data);
+  /*   localStorage.removeItem("saved-data");
+  localStorage.removeItem("room-data"); */
+}
+
 (function () {
   buttonComp({});
   handsComp();
   state.initState();
-  /*   window.addEventListener("beforeunload", () => {
-    state.setState(state.data);
-  }); */
-
-  /* (.a)  state.subscribe(() => {
-     console.log("soy el subscribe del index", state.getState().myUserId); 
-  });/*
-  const root = document.querySelector(".root");
-  /*   initRouter(root as Element); */
-
-  /* state.setPlayerName("cmed");
-  state.signUp(async () => {
-    try {
-      await state.askNewRoom();
-    } catch (err) {
-      console.log(err);
-    }
+  window.addEventListener("beforeunload", async () => {
+    await beforeunloadUpdate();
   });
-
-
-  state.listenRooms(); */
 })();
-
-//////////////////////////////////////////////////////////////////////////////
-
-/* (.a) El subscribe no estaba funcionando porque no estaba respetando los callbacks de la función Signup en el state.
-state.signUp va a usar una arrow function para respetar el scope(this) y si existiera un parámetro a recibir 
-sería solamente(err).SI NO HAY PARÁMETRO NO HAY ERROR, y con eso chequeamos.
-
-Hacemos este método de callback para que el signin nos pueda avisar que la promesa ha terminado.
-Como esta función es asíncrona, hasta que no termine no se va a poder ejecutar asknewRoom() */
-
-/* (err) => {
-    if (err) {
-      console.error("hubo un error en el signup");
-      state.askNewRoom(() => {
-        state.accessExistentRoom();
-      });
-    }
-  }); */
-/* localStorage.removeItem("saved-data"); */
-
-/* window.onbeforeunload = function () {
-  localStorage.removeItem("saved-data");
-  return "";
-};
- */
-
-/* 
-ids:: const opponent = lodash.find(
-  Object.keys(this.cs.currentGame),
-  (player) => player != cs.userId
-);
-this.cs.opponent = opponent; */
-/* 
-BORRAR EL LOCAL STORAGE */

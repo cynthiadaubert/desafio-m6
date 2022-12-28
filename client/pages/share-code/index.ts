@@ -10,7 +10,6 @@ class ShareCodePage extends HTMLElement {
     state.subscribe(() => {
       const { rivalName } = state.getState();
       if (rivalName != "" && window.location.pathname == "/sharecode") {
-        console.log("online");
         Router.go("/instr");
       }
       this.render();

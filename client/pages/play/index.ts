@@ -4,12 +4,35 @@ import { state } from "../../state";
 class PlayPage extends HTMLElement {
   connectedCallback() {
     this.render();
-    /*     state.subscribe(() => {});
-    this.render(); */
+  }
+
+  async getResults() {
+    const cs = state.getState();
+    try {
+      await state.getPlayerChoices(() => {
+        const p1 = cs.roomData.playerOne.choice;
+        const p2 = cs.roomData.playerTwo.choice;
+        /*     console.log("get results", cs.roomData); */
+        if (!p1) {
+          state.setMyMove("null");
+          /*    console.log("mi move es null"); */
+        }
+        if (!p2) {
+          state.setRivalMove("null");
+          /*   console.log("rival es null"); */
+        } else if (!p1 && !p2) {
+          state.setMyMove("null");
+          state.setRivalMove("null");
+          /*     console.log("ambos null"); */
+        }
+        Router.go("/showhands");
+      });
+    } catch (err) {
+      console.log(err);
+    }
   }
 
   render() {
-    /*    const div = document.createElement("div"); */
     this.className = "container-play";
 
     this.innerHTML = `
@@ -134,63 +157,27 @@ class PlayPage extends HTMLElement {
       counter--;
       if (counter < 0) {
         clearInterval(intervalId);
-        state.getPlayerChoices(async () => {
+        this.getResults(); /* .then(() => {
+          Router.go("/showhands");
+        }); */
+        /* state.getPlayerChoices(async () => {
           const p1 = currentState.roomData.playerOne.choice;
           const p2 = currentState.roomData.playerTwo.choice;
           try {
             await console.log("?");
             if (p1 && p2 == undefined) {
+              console.log("sin definir");
               Router.go("/results");
             }
           } catch (err) {
             console.log(err);
           }
-        });
-        Router.go("/showhands");
+        }); */
+        /*  Router.go("/showhands"); */
       }
     }, 1000);
 
-    /* shadow.appendChild(div); */
     this.appendChild(style);
   }
 }
 customElements.define("play-page", PlayPage);
-
-/*const intervalId = setInterval(() => {
-  countdownElem.innerHTML = `${counter}`;
-  counter--;
-  if (counter < 0) {
-     if (
-      currentState.isPlayerOne == true &&
-      currentState.currentGame.myPlay == ""
-    ) {
-      state.setMyMove("null");
-          state.setState(currentState); 
-      console.log("soy null");
-      Router.go("/instr");
-    } else if (
-      currentState.isPlayerTwo == true &&
-      currentState.currentGame.computerPlay == ""
-    ) {
-      state.setRivalMove("null");
-      /*    state.setState(currentState); 
-      console.log("rival es null");
-      Router.go("/instructions");
-    }
-    clearInterval(intervalId);
-
-    Router.go("/showhands");
-  }
-}, 1000);*/
-
-////// TIMEOUT PARA PASAR A LAS MANOS //////
-
-/*     const handsContainer: any = document.querySelector(".hands");
-
-    handsContainer.addEventListener("click", () => {
-      console.log("cliqueaste mano");
-      clearInterval(intervalId);
-      setTimeout(() => {
-        Router.go("/showhands");
-      }, 1000);
-    }); */

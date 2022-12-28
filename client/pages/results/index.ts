@@ -15,7 +15,6 @@ class ResultsPage extends HTMLElement {
   }
 
   render() {
-    /*  let shadow = this.attachShadow({ mode: "open" }); */
     const box = document.createElement("div");
     const style = document.createElement("style");
 
@@ -46,6 +45,7 @@ class ResultsPage extends HTMLElement {
     }
 
     //// MUESTRA EL SCORE CON LOS PUNTOS Y BOTONES ////
+
     box.innerHTML = `
 
     <div class="container">
@@ -161,24 +161,6 @@ class ResultsPage extends HTMLElement {
 
   `;
 
-    //// COLOR DE FONDO SEGUN RESULTADO ////
-
-    /*     let result = state.whoWins(myMove, rivalMove);
-
-    if (currentState.isPlayerOne == true && result == "win") {
-      result = "win";
-    } else if (currentState.isPlayerOne == true && result == "lose") {
-      result = "lose";
-    } else if (currentState.isPlayerTwo == true && result == "win") {
-      result = "lose";
-    } else if (currentState.isPlayerTwo == true && result == "lose") {
-      result = "win";
-    } else {
-      result = "tie";
-    }
-
-    box.className = result;  */
-
     state.setScore();
 
     //// BOTON VOLVER A JUGAR Y REINICIAR PUNTAJE ////
@@ -193,10 +175,11 @@ class ResultsPage extends HTMLElement {
     });
 
     const buttonReset: any = box.querySelector(".reset");
-    buttonReset.addEventListener("click", () => {
-      state.restartPoints();
-      Router.go("/welcome");
-      console.log("puntaje reiniciado", localStorage);
+    buttonReset.addEventListener("click", async () => {
+      const restart: any = state.restartValues();
+      restart.then(() => {
+        Router.go("/welcome");
+      });
     });
 
     this.appendChild(box);

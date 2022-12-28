@@ -4,8 +4,6 @@ type Jugada = "piedra" | "papel" | "tijera" | "null";
 const API_BASE_URL =
   /* "https://desafiom6.onrender.com" || */ "http://localhost:8000";
 
-import map from "lodash/map";
-
 import { rtdb } from "../server/realtimeDB";
 
 const state = {
@@ -235,7 +233,6 @@ const state = {
       currentState.online = true;
     }
     this.setState(currentState);
-    console.log("valores seteados");
     if (callback) {
       callback();
     }
@@ -307,7 +304,6 @@ const state = {
       currentState.rivalStart = true;
     }
     this.setState(currentState);
-    console.log("el start del rival es:", currentState.rivalStart);
     if (callback) {
       callback();
     }
@@ -363,13 +359,13 @@ const state = {
         this.listenConnectedPlayers() == false
           ? this.setRealtimeConnection(true)
           : "";
-        console.log("conectadosssss");
         Router.go("/play");
       }
     });
   },
 
   /*   >>>>>>>>>>>>>>>>>>>>>>>>>>>>> FUNCIONES PARA LAS JUGADAS <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< */
+
   setMyMove(choice: Jugada) {
     const currentState = this.getState();
     const rtdbRoomId = currentState.rtdbRoomId;
@@ -392,12 +388,10 @@ const state = {
       })
       .then((data) => {
         currentState.currentGame.myPlay = data.choice;
-        console.log("current", currentState);
-        console.log("FETCH MOVE PLAYER 1", data.choice);
+        /*  console.log("FETCH MOVE PLAYER 1", data.choice); */
       });
 
     this.setState(currentState);
-    console.log(currentState.currentGame.myPlay);
   },
 
   setRivalMove(choice: Jugada) {
@@ -422,11 +416,9 @@ const state = {
       })
       .then((data) => {
         currentState.currentGame.computerPlay = data.choice;
-        console.log("current, rival", currentState);
-        console.log("FETCH MOVE RIVAL", data.choice);
+        /*         console.log("FETCH MOVE RIVAL", data.choice); */
       });
     this.setState(currentState);
-    console.log(currentState.currentGame.computerPlay);
   },
 
   getPlayerChoices(callback?) {
@@ -443,16 +435,13 @@ const state = {
         currentState.currentGame.myPlay == p1;
         currentState.currentGame.computerPlay == p2;
         state.setState(currentState);
-        console.log(
+        /*         console.log(
           "soy la data del fetch getplayers",
           "player 1",
           p1,
           "player 2",
           p2
-          /*           data["p1"].choice,
-          data["p2"].choice,
-          currentState.currentGame */
-        );
+        ); */
       });
     if (callback) {
       callback();
@@ -460,23 +449,24 @@ const state = {
   },
 
   //// DECIDE SI GANA, PIERDE O EMPATA ////
+
   whoWins(myPlay: Jugada, computerPlay: Jugada) {
-    console.log("who wins", myPlay, computerPlay);
+    /* console.log("who wins", myPlay, computerPlay); */
     const currentState = this.getState();
 
     const ganeConTijeras =
-      myPlay == "tijera" && computerPlay == ("papel" || "null");
+      myPlay == "tijera" && computerPlay == ("papel" || "null" || undefined);
     const ganeConPiedra =
-      myPlay == "piedra" && computerPlay == ("tijera" || "null");
+      myPlay == "piedra" && computerPlay == ("tijera" || "null" || undefined);
     const ganeConPapel =
-      myPlay == "papel" && computerPlay == ("piedra" || "null");
+      myPlay == "papel" && computerPlay == ("piedra" || "null" || undefined);
 
     const pcGanaTijeras =
-      myPlay == ("papel" || "null") && computerPlay == "tijera";
+      myPlay == ("papel" || "null" || undefined) && computerPlay == "tijera";
     const pcGanaPiedra =
-      myPlay == ("tijera" || "null") && computerPlay == "piedra";
+      myPlay == ("tijera" || "null" || undefined) && computerPlay == "piedra";
     const pcGanaPapel =
-      myPlay == ("piedra" || "null") && computerPlay == "papel";
+      myPlay == ("piedra" || "null" || undefined) && computerPlay == "papel";
 
     const win = [ganeConTijeras || ganeConPiedra || ganeConPapel].includes(
       true
@@ -506,7 +496,7 @@ const state = {
     const cs = this.getState();
     const p1Score = cs.history.me;
     const p2Score = cs.history.computer;
-    console.log("p1 score y p2score", p1Score, p2Score);
+    /*     console.log("p1 score y p2score", p1Score, p2Score); */
     const rtdbRoomRef = rtdb.ref("/rooms/" + cs.rtdbRoomId + "/current-game");
     rtdbRoomRef.update({
       history: {
@@ -532,39 +522,47 @@ const state = {
     });
 
     this.setState(cs);
-    console.log("current score", cs.roomData);
   },
 
-  restartPoints() {
+  restartValues(callback?) {
     const currentState = state.getState();
     const rtdbRoomRef = rtdb.ref(
       "/rooms/" + currentState.rtdbRoomId + "/current-game"
     );
-    if (currentState.myName) {
-      rtdbRoomRef.update({
-        playerOne: {
-          choice: "",
-          name: currentState.myName,
-          online: true,
-          start: false,
-          score: "",
-        },
-      });
-    }
-    if (currentState.rivalName) {
-      rtdbRoomRef.update({
-        playerTwo: {
-          choice: "",
-          name: currentState.rivalName,
-          online: true,
-          start: false,
-          score: "",
-        },
-      });
-    }
-    currentState.currentGame.myPlay = "";
-    currentState.currentGame.computerPlay = "";
+    rtdbRoomRef.update({
+      history: {
+        playerOne: 0,
+        playerTwo: 0,
+      },
+      playerOne: {
+        choice: "",
+        name: "",
+        online: false,
+        start: false,
+        score: "",
+      },
+      playerTwo: {
+        choice: "",
+        name: "",
+        online: false,
+        start: false,
+        score: "",
+      },
+    });
+
+    currentState.currentGame = {
+      myPlay: "",
+      computerPlay: "",
+    };
+    currentState.history = {
+      computer: 0,
+      me: 0,
+    };
     this.setState(currentState);
+    console.log("puntaje reiniciado");
+    if (callback) {
+      callback();
+    }
   },
 
   setState(newState) {

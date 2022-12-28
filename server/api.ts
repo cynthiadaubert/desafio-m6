@@ -3,6 +3,7 @@ import { firestore } from "./database";
 import express from "express";
 import nanoid from "nanoid";
 /* import * as cors from "cors"; */
+import * as path from "path";
 import cors from "cors";
 import "dotenv/config";
 
@@ -12,7 +13,6 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
-app.use(express.static("dist"));
 
 const playerCollection = firestore.collection("players");
 const playroomCollection = firestore.collection("rooms");
@@ -124,6 +124,7 @@ app.get("/rooms/:roomId", (req, res) => {
 });
 
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P1
+
 app.patch("/rooms/:rtdbRoomId/current-game/playerOne/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
   const choice = req.body.choice;
@@ -135,6 +136,7 @@ app.patch("/rooms/:rtdbRoomId/current-game/playerOne/choice", (req, res) => {
     });
   });
 });
+
 // ACTUALIZA LAS MANOS ELEGIDAS DEL P2
 app.patch("/rooms/:rtdbRoomId/current-game/playerTwo/choice", (req, res) => {
   const rtdbRoomId = req.params.rtdbRoomId;
@@ -147,13 +149,6 @@ app.patch("/rooms/:rtdbRoomId/current-game/playerTwo/choice", (req, res) => {
     });
   });
 });
-/*   const roomRef = rtdb.ref(`/rooms/${rtdbRoomId}/current-game/playerTwo`);
-  roomRef.update({ move }).then((data) => {
-    res.status(202).send({
-      message: `El player eligió: ${userChoice}`,
-    });
-  });
-}); */
 
 // DEVUELVE LOS MOVIMIENTOS DE LOS JUGADORES
 app.get("/rooms/:rtdbRoomId/current-game", (req, res) => {
@@ -175,18 +170,12 @@ app.get("/rooms/:rtdbRoomId/current-game", (req, res) => {
   });
 });
 
-// Ejecutar express static y escuchar el puerto //
+// Ejecuta express static y escucha el puerto //
+
+app.use(express.static("dist"));
 
 app.get("*", (req, res) => {
-  res.sendFile(__dirname + "/dist/index.html");
-  /*   
-  import * as path from "path"
-const rutaRelativa = path.resolve(__dirname, "../una-carpeta/",  "un-archivo.html");
-console.log(rutaRelativa)
-AGREGAR ARRIBA SI LO NECESITAMOS
-import * as path from "path";
-const pathResolve = path.resolve("", "dist/index.html");
-  res.sendFile(pathResolve); */
+  res.sendFile(path.join(__dirname + "/dist/index.html"));
 });
 
 app.listen(port, () => {

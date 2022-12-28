@@ -166,7 +166,6 @@ class WaitingPage extends HTMLElement {
 
   `;
 
-    /*  this.appendChild(div); */
     this.appendChild(style);
   }
 }

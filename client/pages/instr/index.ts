@@ -1,5 +1,4 @@
 import { Router } from "@vaadin/router";
-import e from "express";
 import { state } from "../../state";
 
 class InstrPage extends HTMLElement {

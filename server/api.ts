@@ -2,7 +2,6 @@ import { rtdb } from "./realtimeDB";
 import { firestore } from "./database";
 import express from "express";
 import nanoid from "nanoid";
-/* import * as cors from "cors"; */
 import * as path from "path";
 import cors from "cors";
 import "dotenv/config";
@@ -10,7 +9,6 @@ import "dotenv/config";
 const port = process.env.PORT || 8000;
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 

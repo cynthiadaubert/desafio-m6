@@ -1,6 +1,7 @@
 {
   "name": "desafio-m6",
   "version": "1.0.0",
+  "engines": {"node": ">= 14.20.0"},
   "license": "MIT",
   "dependencies": {
     "@types/firebase": "^3.2.1",

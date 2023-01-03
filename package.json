@@ -2,7 +2,6 @@
   "name": "desafio-m6",
   "version": "1.0.0",
   "license": "MIT",
-"engines": {"node": "14.20.0"},
     "dependencies": {
     "@types/firebase": "^3.2.1",
     "@types/node": "^18.7.18",
@@ -37,7 +36,8 @@
   "default": "dist/index.html",
   "targets": {
     "default": {
-      "publicUrl": "./"
+      "publicUrl": "./",
+      "includeNodeModules": true
     }
   }
 }

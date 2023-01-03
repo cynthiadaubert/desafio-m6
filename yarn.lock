@@ -1981,7 +1981,7 @@
     "@types/mime" "*"
     "@types/node" "*"
 
-"@vaadin/router@^1.7.4":
+"@vaadin/router@1.7.4":
   version "1.7.4"
   resolved "https://registry.yarnpkg.com/@vaadin/router/-/router-1.7.4.tgz#76d78d0091275cadf1ac18f0e8b75bf0fd6fe253"
   integrity sha512-B4JVtzFVUMlsjuJHNXEMfNZrM4QDrdeOMc6EEigiHYxwF82py6yDdP6SWP0aPoP3f6aQHt51tLWdXSpkKpWf7A==

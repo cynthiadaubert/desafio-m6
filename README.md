@@ -4,6 +4,6 @@ Piedra, Papel o Tijera versión multijugador
 * Permite crear gamerooms, jugar y llevar el score del room para siempre.
 * Servidor: render
 
-LINK de la app: 
+LINK de la app: https://desafio-m6.onrender.com
 
 Documentación POSTMAN: https://documenter.getpostman.com/view/21955737/2s8Z6yVruB

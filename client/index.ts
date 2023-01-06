@@ -17,15 +17,16 @@ import { buttonComp } from "./components/button";
 async function beforeunloadUpdate() {
   state.setRealtimeConnection(false);
   state.restartValues();
+  localStorage.removeItem("saved-data");
+  localStorage.removeItem("room-data");
   state.setState(state.data);
-  /*   localStorage.removeItem("saved-data");
-  localStorage.removeItem("room-data"); */
 }
 
 (function () {
   buttonComp({});
   handsComp();
   state.initState();
+
   window.addEventListener("beforeunload", async () => {
     await beforeunloadUpdate();
   });

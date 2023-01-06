@@ -5,11 +5,11 @@ class OpenRoomPage extends HTMLElement {
   connectedCallback() {
     this.render();
 
-    state.initState();
+    /*  state.initState();
     const cs = state.getState();
     if (cs.rtdbRoomId) {
       console.log("ok");
-    }
+    } */
   }
 
   render() {
@@ -157,7 +157,7 @@ class OpenRoomPage extends HTMLElement {
         alert("Ingrese el código de la room");
       } else if (!rivalName) {
         alert("Ingrese su nombre de usuario");
-      } else if (roomCode == state.data.roomId) {
+      } /* if (roomCode == state.data.roomId) */ else {
         state.rivalSignUp(() => {
           state.setRtdbRivalValues(() => {
             if (
@@ -172,10 +172,10 @@ class OpenRoomPage extends HTMLElement {
             }
           });
         });
-      } else {
+      } /* else {
         console.log("el código no coincide con el state");
         Router.go("/error");
-      }
+      } */
     });
 
     this.appendChild(style);

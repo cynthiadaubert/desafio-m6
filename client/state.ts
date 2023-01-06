@@ -2,7 +2,7 @@ import { Router } from "@vaadin/router";
 type Jugada = "piedra" | "papel" | "tijera" | "null";
 
 const API_BASE_URL =
-  "http://localhost:8000"; /* ||"https://desafio-m6.onrender.com" */
+  /*"http://localhost:8000";*/ "https://desafio-m6.onrender.com";
 
 import { rtdb } from "../server/realtimeDB";
 

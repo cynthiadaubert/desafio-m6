@@ -4,6 +4,12 @@ import { state } from "../../state";
 class OpenRoomPage extends HTMLElement {
   connectedCallback() {
     this.render();
+
+    state.initState();
+    const cs = state.getState();
+    if (cs.rtdbRoomId) {
+      console.log("ok");
+    }
   }
 
   render() {
@@ -143,6 +149,8 @@ class OpenRoomPage extends HTMLElement {
       const rivalName = target["name"].value;
       state.setRivalName(rivalName);
       state.setState(cs);
+
+      /*   state.listenRoom(currentState.rtdbRoomId); */
 
       /*  console.log("current state", state.data.roomId); */
       if (!roomCode) {

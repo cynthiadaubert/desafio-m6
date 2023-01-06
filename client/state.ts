@@ -1,7 +1,8 @@
 import { Router } from "@vaadin/router";
 type Jugada = "piedra" | "papel" | "tijera" | "null";
 
-const API_BASE_URL = "https://desafio-m6.onrender.com";
+const API_BASE_URL =
+  "http://localhost:8000"; /* ||"https://desafio-m6.onrender.com" */
 
 import { rtdb } from "../server/realtimeDB";
 
@@ -192,6 +193,7 @@ const state = {
       const rivalStart = rtdbData.playerTwo.start;
       const myScore = rtdbData.playerOne.score;
       const rivalScore = rtdbData.playerTwo.score;
+      const roomId = currentState.roomId;
 
       this.setState({
         ...currentState,
@@ -205,8 +207,9 @@ const state = {
         computerPlay,
         myScore,
         rivalScore,
+        roomId,
       });
-
+      /*  console.log("listen room", currentState); */
       const newRoomData = state.getState();
       localStorage.setItem("room-data", JSON.stringify({ ...newRoomData }));
     });

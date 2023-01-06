@@ -9,7 +9,6 @@ class ResultsPage extends HTMLElement {
   connectedCallback() {
     this.render();
     const currentState = state.getState();
-    console.log("current en results", currentState);
     state.listenRoom(currentState.rtdbRoomId);
     state.subscribe(() => {});
   }

@@ -55,6 +55,7 @@ app.post("/rooms", (req, res) => {
             ownerId: userId,
 
             "current-game": {
+              roomId: "",
               history: { playerOne: 0, playerTwo: 0 },
               playerOne: {
                 name: "",
